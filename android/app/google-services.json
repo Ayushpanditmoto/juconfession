@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "350783778730",
+    "project_id": "juconfess-dae75",
+    "storage_bucket": "juconfess-dae75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:350783778730:android:122e1fefb4efdf2092c5d3",
+        "android_client_info": {
+          "package_name": "com.example.juconfession"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "350783778730-1np50diu4hs7pgd45l98jaapng1al9sv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYyk-8tDe_jC6W2gFdsoQ1nrJ1YdDLYGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "350783778730-1np50diu4hs7pgd45l98jaapng1al9sv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
