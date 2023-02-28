@@ -44,9 +44,12 @@ class TextEnterArea extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: TextFormField(
-          //error text in center
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
           textAlignVertical: TextAlignVertical.center,
-
           onChanged: onChanged,
           focusNode: focusNode, //it is used to focus on the text field
           textInputAction:
@@ -54,7 +57,6 @@ class TextEnterArea extends StatelessWidget {
           keyboardType: keyboardType,
           obscureText: obscureText,
           validator: validator,
-
           onFieldSubmitted: onFiledSubmitted,
           controller: controller,
           decoration: InputDecoration(

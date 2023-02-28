@@ -9,6 +9,13 @@ class CustomTheme {
       fontFamily: GoogleFonts.poppins(
         fontWeight: FontWeight.w700,
       ).fontFamily,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
     );
   }
 
@@ -19,6 +26,15 @@ class CustomTheme {
         fontWeight: FontWeight.w700,
       ).fontFamily,
       brightness: Brightness.dark,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: mobiledarkBackgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
     ).copyWith(
       scaffoldBackgroundColor: mobiledarkBackgroundColor,
     );

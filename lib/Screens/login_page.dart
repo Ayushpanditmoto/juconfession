@@ -35,7 +35,6 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                //svg image
                 SvgPicture.asset(
                   'assets/home.svg',
                   height: 300,
@@ -48,8 +47,6 @@ class _LoginState extends State<Login> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
-
-                // email text field
                 TextEnterArea(
                   hintText: 'Email',
                   controller: emailController,
@@ -60,8 +57,6 @@ class _LoginState extends State<Login> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                 ),
-
-                // password text field
                 TextEnterArea(
                   hintText: 'Password',
                   controller: passwordController,
@@ -89,29 +84,35 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 10),
                 // login button
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RoutePath.confess);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: const Color.fromARGB(255, 0, 0, 0),
-                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      minimumSize: const Size(160, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, RoutePath.confess);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    minimumSize: const Size(160, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text('Login',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ))),
-                // forgot password button
+                  ),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, RoutePath.forgot);
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white,
+                  ),
                   child: const Text('Forgot Password'),
                 ),
                 // sign up button
@@ -120,6 +121,10 @@ class _LoginState extends State<Login> {
                   onPressed: () {
                     Navigator.pushNamed(context, RoutePath.signup);
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white,
+                  ),
                   child: const Text('Sign Up'),
                 ),
               ],
