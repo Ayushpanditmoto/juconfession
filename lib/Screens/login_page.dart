@@ -13,11 +13,16 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController emailController = TextEditingController();
-
-  TextEditingController passwordController = TextEditingController();
-
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,7 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'JU Confessions',
+                  'JU Confession',
                   style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,

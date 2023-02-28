@@ -12,10 +12,22 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController departmentController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    departmentController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    usernameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +38,6 @@ class _SignUpState extends State<SignUp> {
           physics: const BouncingScrollPhysics(),
           child: Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -35,15 +46,35 @@ class _SignUpState extends State<SignUp> {
                 //svg image
                 SvgPicture.asset(
                   'assets/signup.svg',
-                  height: 300,
+                  height: 250,
                 ),
                 const SizedBox(height: 10),
                 const Text(
                   'Sign Up',
                   style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
+                ),
+                Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
+                      backgroundColor: Colors.red,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        onPressed: () {
+                          //disabling the button
+                        },
+                        icon: const Icon(Icons.add_a_photo),
+                      ),
+                    )
+                  ],
                 ),
                 TextEnterArea(
                   hintText: 'Name',
@@ -60,6 +91,17 @@ class _SignUpState extends State<SignUp> {
                   controller: departmentController,
                   prefixIcon: const Icon(
                     Icons.person_search,
+                    color: Colors.black54,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                ),
+                //username text field
+                TextEnterArea(
+                  hintText: 'Username',
+                  controller: usernameController,
+                  prefixIcon: const Icon(
+                    Icons.person,
                     color: Colors.black54,
                   ),
                   keyboardType: TextInputType.emailAddress,
