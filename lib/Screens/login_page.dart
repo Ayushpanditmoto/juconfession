@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
+import 'package:juconfession/utils/utils.dart';
 import '../components/custom_text_field.dart';
 
 class Login extends StatefulWidget {
@@ -16,6 +18,7 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -89,8 +92,22 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 10),
                 // login button
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutePath.confess);
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    String result = await AuthMethod().loginUser(
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
+                    setState(() {
+                      isLoading = false;
+                    });
+
+                    showSnackBar(result, context);
+                    if (result == 'Logged In Successfully') {
+                      Navigator.pushNamed(context, RoutePath.confess);
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -100,14 +117,18 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.black,
+                        )
+                      : const Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(

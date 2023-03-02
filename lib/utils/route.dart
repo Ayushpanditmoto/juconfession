@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Screens/login_page.dart';
-import '../Screens/confession.dart';
+import '../Screens/home.dart';
 import '../Screens/sign_up.dart';
 import '../Screens/forgot_password.dart';
 import '../Screens/single_post.dart';

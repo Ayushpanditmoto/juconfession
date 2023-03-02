@@ -1,8 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:juconfession/services/auth.firebase.dart';
+import 'package:juconfession/utils/utils.dart';
 
 import '../components/custom_text_field.dart';
-import '../utils/route.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -17,6 +23,8 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
+  bool isLogin = false;
+  File? _image;
 
   @override
   void dispose() {
@@ -26,6 +34,16 @@ class _SignUpState extends State<SignUp> {
     passwordController.dispose();
     usernameController.dispose();
     super.dispose();
+  }
+
+  void selectImage() async {
+    final picker = ImagePicker();
+    XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -58,19 +76,24 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Stack(
                   children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundImage:
-                          NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
-                      backgroundColor: Colors.red,
-                    ),
+                    _image != null
+                        ? CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                MemoryImage(_image!.readAsBytesSync()),
+                            backgroundColor: Colors.red,
+                          )
+                        : const CircleAvatar(
+                            radius: 50,
+                            backgroundImage: NetworkImage(
+                                'https://i.stack.imgur.com/l60Hf.png'),
+                            backgroundColor: Colors.red,
+                          ),
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: IconButton(
-                        onPressed: () {
-                          //disabling the button
-                        },
+                        onPressed: selectImage,
                         icon: const Icon(Icons.add_a_photo),
                       ),
                     )
@@ -133,23 +156,57 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(height: 10),
                 // login button
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RoutePath.confess);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: const Color.fromARGB(255, 0, 0, 0),
-                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      minimumSize: const Size(160, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  onPressed: () async {
+                    try {
+                      setState(() {
+                        isLogin = true;
+                      });
+                      String result = await AuthMethod().signUpUser(
+                          email: emailController.text,
+                          password: passwordController.text,
+                          name: nameController.text,
+                          image: File(_image!.path).readAsBytesSync(),
+                          department: departmentController.text);
+
+                      setState(() {
+                        isLogin = false;
+                      });
+
+                      showSnackBar(result, context);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Something went wrong'),
+                        ),
+                      );
+                    }
+
+                    // Navigator.pushNamed(context, RoutePath.confess);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    minimumSize: const Size(160, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text('Sign Up',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ))),
+                  ),
+                  child: isLogin
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
               ],
             ),
           ),

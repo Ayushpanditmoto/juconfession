@@ -1,11 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/post_components.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/theme_provider.dart';
+import '../services/auth.firebase.dart';
 
-class Confession extends StatelessWidget {
-  const Confession({super.key});
+class ConfessionPage extends StatelessWidget {
+  const ConfessionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +31,29 @@ class Confession extends StatelessWidget {
             ),
           ],
         ),
-        drawer: const Drawer(),
-        body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(15),
+        drawer: Drawer(
+          child: Center(
             child: Column(
-              children: const [
-                Post(),
-                Post(),
-                Post(),
-                Post(),
-                Post(),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(FirebaseAuth.instance.currentUser!.email!),
+                ElevatedButton(
+                  onPressed: () {
+                    AuthMethod().logout();
+                  },
+                  child: const Text('Sign Out'),
+                ),
               ],
-            )));
+            ),
+          ),
+        ),
+        body: ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(8),
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return const Post();
+          },
+        ));
   }
 }

@@ -9,16 +9,19 @@ class User {
   final List followers;
   final List following;
   final bool isVerified;
+  final bool isBanned;
 
-  const User(
-      {required this.username,
-      required this.uid,
-      required this.photoUrl,
-      required this.email,
-      required this.bio,
-      required this.followers,
-      required this.following,
-      this.isVerified = false});
+  const User({
+    required this.username,
+    required this.uid,
+    required this.photoUrl,
+    required this.email,
+    required this.bio,
+    required this.followers,
+    required this.following,
+    this.isVerified = false,
+    this.isBanned = false,
+  });
 
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
@@ -32,6 +35,7 @@ class User {
       followers: snapshot["followers"],
       following: snapshot["following"],
       isVerified: snapshot["isVerified"],
+      isBanned: snapshot["isBanned"],
     );
   }
 
@@ -44,5 +48,6 @@ class User {
         "followers": followers,
         "following": following,
         "isVerified": isVerified,
+        "isBanned": isBanned,
       };
 }
