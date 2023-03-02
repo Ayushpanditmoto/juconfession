@@ -15,8 +15,8 @@ class VideoChat extends StatefulWidget with WidgetsBindingObserver {
 class _VideoChatState extends State<VideoChat> {
   double left = 100;
   double top = 100;
-  RTCVideoRenderer localRenderer = RTCVideoRenderer();
-  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer localRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   bool isPermissionGranted = false;
 
   void requestMultiplePermissions() async {
@@ -55,6 +55,7 @@ class _VideoChatState extends State<VideoChat> {
   void dispose() {
     localRenderer.dispose();
     remoteRenderer.dispose();
+    closeCameraStream();
     super.dispose();
   }
 
@@ -75,6 +76,16 @@ class _VideoChatState extends State<VideoChat> {
     }
   }
 
+  closeCameraStream() async {
+    try {
+      final MediaStream? stream = localRenderer.srcObject;
+      stream!.getTracks().forEach((track) => track.stop());
+      localRenderer.srcObject = null;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +101,25 @@ class _VideoChatState extends State<VideoChat> {
                   height: 10,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    //this feature is not yet implemented
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Feature not yet implemented'),
+                        content: const Text(
+                            'This feature is not yet implemented. Please try again later'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.deepPurple,
