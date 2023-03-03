@@ -1,12 +1,13 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:juconfession/services/chat.joinroom.dart';
 import 'package:peerdart/peerdart.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class VideoChat extends StatefulWidget with WidgetsBindingObserver {
+class VideoChat extends StatefulWidget {
   const VideoChat({super.key});
 
   @override
@@ -150,6 +151,38 @@ class _VideoChatState extends State<VideoChat> {
     }
   }
 
+  void createRoom() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final DatabaseReference database =
+        FirebaseDatabase.instance.ref().child("rooms");
+    database
+        .child(peerId!)
+        .orderByChild("status")
+        .limitToFirst(1)
+        .onValue
+        .listen((event) {
+      print("ayush room key ${event.snapshot.key} $peerId");
+      if (event.snapshot.key == peerId) {
+        if (event.snapshot.value!['isavailable'] == true) {
+          print("ayush: room already exists");
+          database.child(peerId!).update({
+            "incomingCall": peerId,
+            "status": 1,
+            "isAvailable": false,
+          });
+        }
+      } else {
+        print("ayush: room does not exists");
+        database.child(peerId!).set({
+          "createdBy": peerId,
+          "incomingCall": peerId,
+          "status": 0,
+          "isAvailable": true,
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,14 +255,7 @@ class _VideoChatState extends State<VideoChat> {
                       height: 10,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        CreateRoom createRoom = CreateRoom();
-                        print("ayush: ${CreateRoom().getRoomKey()}");
-                        createRoom.createRoom(
-                          peerId: peerId!,
-                          incomingCall: peerId!,
-                        );
-                      },
+                      onPressed: createRoom,
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.deepPurple,
