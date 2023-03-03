@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:juconfession/services/chat.joinroom.dart';
 import 'package:peerdart/peerdart.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,9 +16,13 @@ class VideoChat extends StatefulWidget with WidgetsBindingObserver {
 class _VideoChatState extends State<VideoChat> {
   double left = 100;
   double top = 100;
+  final Peer peer = Peer(id: "176f6a49-5778-42d3-9079-5ec56c716aec");
   final RTCVideoRenderer localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+  final TextEditingController _controller = TextEditingController();
+  String? peerId;
   bool isPermissionGranted = false;
+  bool inCall = false;
 
   void requestMultiplePermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -44,19 +49,78 @@ class _VideoChatState extends State<VideoChat> {
     }
   }
 
+  //generate peer id function
+  String? generatePeerId() {
+    peer.on('open').listen((id) {
+      setState(() {
+        peerId = id;
+      });
+    });
+    return peer.id;
+  }
+
   @override
   void initState() {
     super.initState();
     requestMultiplePermissions();
     initRenderers();
+    peerId = generatePeerId();
+    debugPrint("ayush: peerId generated");
+    debugPrint("ayush: $peerId");
+    peer.on<MediaConnection>("call").listen((call) async {
+      final mediaStream = await navigator.mediaDevices
+          .getUserMedia({"video": true, "audio": true});
+
+      call.answer(mediaStream);
+
+      call.on("close").listen((event) {
+        setState(() {
+          inCall = false;
+          remoteRenderer.srcObject = null;
+        });
+      });
+
+      call.on<MediaStream>("stream").listen((event) {
+        localRenderer.srcObject = mediaStream;
+        remoteRenderer.srcObject = event;
+
+        setState(() {
+          inCall = true;
+        });
+      });
+    });
   }
 
   @override
   void dispose() {
+    peer.dispose();
+    _controller.dispose();
     localRenderer.dispose();
     remoteRenderer.dispose();
     closeCameraStream();
     super.dispose();
+  }
+
+  void connect() async {
+    final mediaStream = await navigator.mediaDevices
+        .getUserMedia({"video": true, "audio": true});
+
+    final conn = peer.call(_controller.text, mediaStream);
+
+    conn.on("close").listen((event) {
+      setState(() {
+        inCall = false;
+      });
+    });
+
+    conn.on<MediaStream>("stream").listen((event) {
+      remoteRenderer.srcObject = event;
+      localRenderer.srcObject = mediaStream;
+
+      setState(() {
+        inCall = true;
+      });
+    });
   }
 
   Future<void> initRenderers() async {
@@ -93,43 +157,91 @@ class _VideoChatState extends State<VideoChat> {
         title: const Text('Random Video Chat'),
       ),
       body: isPermissionGranted
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                videoRenderers(),
-                const SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    //this feature is not yet implemented
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Feature not yet implemented'),
-                        content: const Text(
-                            'This feature is not yet implemented. Please try again later'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.deepPurple,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+          ? SingleChildScrollView(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    videoRenderers(),
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  child: const Text('Search for a random user'),
+                    inCall
+                        ? ElevatedButton(
+                            onPressed: () {
+                              peer.disconnect();
+                              setState(() {
+                                inCall = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.deepPurple,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                            ),
+                            child: const Text('Disconnect'),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter peer id',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  connect();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.deepPurple,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                ),
+                                child: const Text('Connect'),
+                              ),
+                            ],
+                          ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        CreateRoom createRoom = CreateRoom();
+                        print("ayush: ${CreateRoom().getRoomKey()}");
+                        createRoom.createRoom(
+                          peerId: peerId!,
+                          incomingCall: peerId!,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.deepPurple,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      child: const Text('Search for a random user'),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             )
           : requestPermission(),
     );
@@ -141,16 +253,24 @@ class _VideoChatState extends State<VideoChat> {
         child: Stack(
           children: [
             Container(
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.7,
-                key: const Key('local'),
-                margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.7,
+              key: const Key('local'),
+              margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+              decoration: const BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: RTCVideoView(
+                  remoteRenderer,
+                  mirror: true,
+                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                 ),
-                child: RTCVideoView(remoteRenderer, mirror: true)),
+              ),
+            ),
             Positioned(
               top: top,
               left: left,
@@ -206,75 +326,3 @@ class _VideoChatState extends State<VideoChat> {
         ),
       );
 }
-
-// SingleChildScrollView(
-//         child: Padding(
-//           padding: const EdgeInsets.all(20.0),
-//           child: Column(
-//             children: [
-//               ClipRRect(
-//                 borderRadius: BorderRadius.circular(20.0),
-//                 child: Image.asset('assets/girl.jpg'),
-//               ),
-//               const SizedBox(height: 10),
-//               ClipRRect(
-//                 borderRadius: BorderRadius.circular(20.0),
-//                 child: Image.asset('assets/boy.jpg'),
-//               ),
-//               const SizedBox(height: 10),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: const [
-//                   Text('Status:',
-//                       style: TextStyle(
-//                         fontSize: 15,
-//                         fontWeight: FontWeight.bold,
-//                       )),
-//                   Text('Connected',
-//                       style: TextStyle(
-//                         fontSize: 15,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.green,
-//                       )),
-//                 ],
-//               ),
-//               const SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: () {
-//                   showDialog(
-//                       context: context,
-//                       builder: (context) {
-//                         return AlertDialog(
-//                           title: const Text('Development in progress'),
-//                           content: const Text(
-//                               'This feature is still under development. Please check back later.'),
-//                           actions: [
-//                             TextButton(
-//                               onPressed: () {
-//                                 Navigator.pop(context);
-//                               },
-//                               child: const Text('Cancel'),
-//                             ),
-//                             TextButton(
-//                               onPressed: () {
-//                                 Navigator.pop(context);
-//                               },
-//                               child: const Text('Yes'),
-//                             ),
-//                           ],
-//                         );
-//                       });
-//                 },
-//                 style: ElevatedButton.styleFrom(
-//                   foregroundColor: Colors.white,
-//                   backgroundColor: Colors.amber,
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10.0),
-//                   ),
-//                 ),
-//                 child: const Text('Search for a match'),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
