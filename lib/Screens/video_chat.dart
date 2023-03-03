@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,13 +18,14 @@ class VideoChat extends StatefulWidget {
 class _VideoChatState extends State<VideoChat> {
   double left = 100;
   double top = 100;
-  final Peer peer = Peer(id: "176f6a49-5778-42d3-9079-5ec56c716aec");
+  final Peer peer = Peer();
   final RTCVideoRenderer localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   final TextEditingController _controller = TextEditingController();
   String? peerId;
   bool isPermissionGranted = false;
   bool inCall = false;
+  StreamSubscription? _streamSubscription;
 
   void requestMultiplePermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -102,11 +104,12 @@ class _VideoChatState extends State<VideoChat> {
     super.dispose();
   }
 
-  void connect() async {
+  void connect(String incoming) async {
     final mediaStream = await navigator.mediaDevices
         .getUserMedia({"video": true, "audio": true});
 
-    final conn = peer.call(_controller.text, mediaStream);
+    // final conn = peer.call(_controller.text, mediaStream);
+    final conn = peer.call(incoming, mediaStream);
 
     conn.on("close").listen((event) {
       setState(() {
@@ -155,32 +158,73 @@ class _VideoChatState extends State<VideoChat> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final DatabaseReference database =
         FirebaseDatabase.instance.ref().child("rooms");
-    database
-        .child(peerId!)
+    _streamSubscription = database
+        .child(auth.currentUser!.uid)
         .orderByChild("status")
+        .equalTo(0)
         .limitToFirst(1)
         .onValue
         .listen((event) {
-      print("ayush room key ${event.snapshot.key} $peerId");
-      if (event.snapshot.key == peerId) {
-        if (event.snapshot.value!['isavailable'] == true) {
-          print("ayush: room already exists");
-          database.child(peerId!).update({
-            "incomingCall": peerId,
-            "status": 1,
-            "isAvailable": false,
-          });
-        }
+      print("ayush 69 ${event.snapshot.children.isNotEmpty}");
+
+      if (event.snapshot.children.isNotEmpty) {
+        //room available
+
+        final peerId = event.snapshot.children.first.key;
+        print("ayush peerId $peerId");
+        database.child(auth.currentUser!.uid).update({
+          "incomingCall": peerId,
+          "status": 1,
+          "isAvailable": false,
+        });
+        connect(
+          peerId!,
+        );
       } else {
-        print("ayush: room does not exists");
-        database.child(peerId!).set({
+        //room not available
+        Map room = {
           "createdBy": peerId,
           "incomingCall": peerId,
           "status": 0,
           "isAvailable": true,
+        };
+        database.child(auth.currentUser!.uid).set(room).whenComplete(() {
+          print("ayush room created");
+
+          database.child(auth.currentUser!.uid).onValue.listen((event) {
+            if (event.snapshot.child("status").exists &&
+                event.snapshot.child("status").value == 1) {
+              print("ayush: call accepted");
+              connect(event.snapshot.child("incomingCall").value as String);
+            }
+          });
         });
       }
+
+      // print("ayush room key ${event.snapshot.key} $peerId");
+      // if (event.snapshot.key == auth.currentUser!.uid) {
+      //   print("ayush: room already exists");
+      //   database.child(auth.currentUser!.uid).update({
+      //     "incomingCall": peerId,
+      //     "status": 0,
+      //     "isAvailable": false,
+      //   });
+      // } else {
+      //   print("ayush: room does not exists");
+      //   database.child(auth.currentUser!.uid).set({
+      //     "createdBy": peerId,
+      //     "incomingCall": peerId,
+      //     "status": 0,
+      //     "isAvailable": true,
+      //   });
+      // }
     });
+  }
+
+  @override
+  void deactivate() {
+    _streamSubscription?.cancel();
+    super.deactivate();
   }
 
   @override
@@ -237,7 +281,7 @@ class _VideoChatState extends State<VideoChat> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  connect();
+                                  connect(_controller.text);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
