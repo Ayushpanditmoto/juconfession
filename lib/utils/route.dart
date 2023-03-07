@@ -18,7 +18,7 @@ class RoutePath {
     confess: (BuildContext context) => const Confession(),
     signup: (BuildContext context) => const SignUp(),
     forgot: (BuildContext context) => const Forgot(),
-    singlePost: (BuildContext context) => const SinglePost(),
+    // singlePost: (BuildContext context) => const SinglePost(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {

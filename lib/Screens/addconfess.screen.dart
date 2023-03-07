@@ -1,7 +1,53 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
 class AddConfession extends StatelessWidget {
-  const AddConfession({super.key});
+  AddConfession({super.key});
+
+  List gender = ['Male', 'Female', 'Other'];
+  List faculty = ['Engineering', 'Science', 'Arts', 'Other'];
+  List engineeringDepartment = [
+    'CSE',
+    'IT',
+    'ETCE',
+    'IEE'
+        'EE',
+    'ME',
+    'Civil',
+    'MME',
+    'FTBE',
+    'Printing',
+    'Chemical',
+    'Construction',
+    'Power',
+    'Production',
+    'Other Engineering'
+  ];
+  List scienceDepartment = [
+    'Physics',
+    'Chemistry',
+    'Mathematics',
+    'Statistics',
+    'Botany',
+    'Zoology',
+    'Microbiology',
+    'Biochemistry',
+    'Biotechnology',
+    'Other Science'
+  ];
+  List artsDepartment = [
+    'Bangla',
+    'English',
+    'History',
+    'Economics',
+    'Political Science',
+    'Sociology',
+    'Philosophy',
+    'Islamic Studies',
+    'Other Arts'
+  ];
+  List otherDepartment = ['Law', 'Medicine', 'Pharmacy', 'Nursing', 'Other'];
 
   @override
   Widget build(BuildContext context) {
@@ -31,99 +77,6 @@ class AddConfession extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Stack(
-                      children: const [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(
-                              'https://images.unsplash.com/photo-1677677159237-a36fcffe4516?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80'),
-                        ),
-                        // Positioned(
-                        //   bottom: 0,
-                        //   right: 0,
-                        //   child: CircleAvatar(
-                        //     radius: 10,
-                        //     backgroundColor: Colors.white,
-                        //     child: CircleAvatar(
-                        //       radius: 8,
-                        //       backgroundColor: Colors.green,
-                        //       child: Icon(
-                        //         Icons.add,
-                        //         size: 15,
-                        //         color: Colors.white,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          height: 40,
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Name',
-                              hintStyle: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          height: 45,
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Department',
-                              hintStyle: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -131,7 +84,7 @@ class AddConfession extends StatelessWidget {
                     border: Border.all(
                       color: Colors.grey,
                     ),
-                    borderRadius: BorderRadius.circular(10),
+                    // borderRadius: BorderRadius.circular(0),
                   ),
                   width: MediaQuery.of(context).size.width,
                   height: 300,
@@ -180,27 +133,6 @@ class AddConfession extends StatelessWidget {
               ),
               const SizedBox(
                 height: 10,
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 40,
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Your Name(optional)',
-                    hintStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
               ),
               const SizedBox(
                 height: 10,

@@ -138,12 +138,12 @@ class _ConfessionState extends State<Confession> {
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: navigationTapped,
-        children: const [
-          ConfessionPage(),
-          AllUsers(),
+        children: [
+          const ConfessionPage(),
+          const AllUsers(),
           AddConfession(),
-          VideoChat(),
-          Center(
+          const VideoChat(),
+          const Center(
             child: Text('Profile'),
           ),
         ],
