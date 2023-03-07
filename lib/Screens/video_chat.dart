@@ -72,8 +72,6 @@ class _VideoChatState extends State<VideoChat> {
     requestMultiplePermissions();
     initRenderers();
     peerId = generatePeerId();
-    debugPrint("ayush: peerId generated");
-    debugPrint("ayush: $peerId");
     peer.on<MediaConnection>("call").listen((call) async {
       final mediaStream = await navigator.mediaDevices
           .getUserMedia({"video": true, "audio": true});
@@ -168,30 +166,39 @@ class _VideoChatState extends State<VideoChat> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final DatabaseReference database =
         FirebaseDatabase.instance.ref().child("rooms");
+
     _streamSubscription = database
-        .child(auth.currentUser!.uid)
         .orderByChild("status")
         .equalTo(0)
         .limitToFirst(1)
         .onValue
         .listen((event) {
-      debugPrint("ayush 69 ${event.snapshot.key}");
-
+      debugPrint("ayush event ${event.snapshot.value}");
       if (event.snapshot.children.isNotEmpty) {
         //room available
 
-        final peerId = event.snapshot.children.first.key;
-        debugPrint("ayush peerId $peerId");
-        database.child(auth.currentUser!.uid).update({
-          "incomingCall": peerId,
-          "status": 1,
-          "isAvailable": false,
-        });
-        if (inCall) {
+        debugPrint("ayush room available");
+
+        for (DataSnapshot childsnap in event.snapshot.children) {
+          if (childsnap.key == auth.currentUser!.uid) {
+            continue;
+          }
+          debugPrint("ayush childsnap ${childsnap.key}");
+          debugPrint("ayush childsnap ${childsnap.value}");
+          debugPrint(
+              "ayush childsnap ${childsnap.child("incomingCall").value}");
+          database.child(childsnap.key!).update({
+            "incomingCall": childsnap.child("incomingCall").value,
+            "status": 1,
+            "isAvailable": false,
+          });
+        }
+        if (inCall && peerId!.isNotEmpty) {
           connect(peerId!);
         }
       } else {
         //room not available
+
         Map room = {
           "createdBy": peerId,
           "incomingCall": peerId,
@@ -201,33 +208,17 @@ class _VideoChatState extends State<VideoChat> {
         database.child(auth.currentUser!.uid).set(room).whenComplete(() {
           debugPrint("ayush room created");
 
-          database.child(auth.currentUser!.uid).onValue.listen((event) {
-            if (event.snapshot.child("status").exists &&
-                event.snapshot.child("status").value == 1) {
-              debugPrint("ayush: call accepted");
-              connect(event.snapshot.child("incomingCall").value as String);
-            }
-          });
+          // database.child(auth.currentUser!.uid).onValue.listen((event) {
+          //   if (event.snapshot.child("status").exists &&
+          //       event.snapshot.child("status").value == 1) {
+          //     debugPrint("ayush: call accepted");
+          //     if (inCall) {
+          //       connect(event.snapshot.child("incomingCall").value as String);
+          //     }
+          //   }
+          // });
         });
       }
-
-      // print("ayush room key ${event.snapshot.key} $peerId");
-      // if (event.snapshot.key == auth.currentUser!.uid) {
-      //   print("ayush: room already exists");
-      //   database.child(auth.currentUser!.uid).update({
-      //     "incomingCall": peerId,
-      //     "status": 0,
-      //     "isAvailable": false,
-      //   });
-      // } else {
-      //   print("ayush: room does not exists");
-      //   database.child(auth.currentUser!.uid).set({
-      //     "createdBy": peerId,
-      //     "incomingCall": peerId,
-      //     "status": 0,
-      //     "isAvailable": true,
-      //   });
-      // }
     });
   }
 
@@ -337,8 +328,24 @@ class _VideoChatState extends State<VideoChat> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            createRoom();
-                            // we are currently working on this feature
+                            // createRoom();
+                            //development stage dialog
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Development Stage'),
+                                content: const Text(
+                                    'This feature is under development'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
