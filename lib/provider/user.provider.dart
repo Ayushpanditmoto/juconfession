@@ -1,13 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../services/auth.firebase.dart';
+import '../model/user.model.dart';
 
 class UserProvider with ChangeNotifier {
-  User? _user;
+  UserModel? _user;
+  final AuthMethod _authMethods = AuthMethod();
 
-  User? get getUser => _user;
+  UserModel get getUser => _user!;
 
   Future<void> refreshUser() async {
-    _user = FirebaseAuth.instance.currentUser;
+    UserModel user = await _authMethods.getUserDetails();
+    _user = user;
     notifyListeners();
   }
 }

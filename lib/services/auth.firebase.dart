@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:juconfession/services/storage.firebase.dart';
-import '../model/user.model.dart' as model;
+import '../model/user.model.dart';
 
 class AuthMethod {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final StorageMethods _storageMethods = StorageMethods();
 
-  Future<model.User> getUserDetails() async {
+  Future<UserModel> getUserDetails() async {
     User? currentUser = _auth.currentUser;
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('users').doc(currentUser!.uid).get();
-    return model.User.fromSnap(documentSnapshot);
+    return UserModel.fromSnap(documentSnapshot);
   }
 
   Future<bool> authenticateUser(User user) async {
@@ -55,7 +55,7 @@ class AuthMethod {
 
         User? user = userCredential.user;
         if (user != null) {
-          model.User users = model.User(
+          UserModel users = UserModel(
             username: name,
             uid: user.uid,
             email: email,
