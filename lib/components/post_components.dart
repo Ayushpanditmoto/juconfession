@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_face_pile/flutter_face_pile.dart';
@@ -14,7 +17,6 @@ import '../services/firestore.methods.dart';
 class Post extends StatelessWidget {
   final Map<String, dynamic> snaps;
   const Post({super.key, required this.snaps});
-
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
@@ -22,6 +24,9 @@ class Post extends StatelessWidget {
     return Card(
       key: key,
       elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(3),
+      ),
       child: Container(
         padding: const EdgeInsets.all(10),
         width: MediaQuery.of(context).size.width,
@@ -106,24 +111,101 @@ class Post extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   onPressed: () {
-                    showMenu(
-                      context: context,
-                      position: RelativeRect.fromLTRB(
-                        MediaQuery.of(context).size.width,
-                        0,
-                        0,
-                        0,
+                    showModalBottomSheet(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(10),
+                        ),
                       ),
-                      items: [
-                        const PopupMenuItem(
-                          value: 'report',
-                          child: Text('Report'),
-                        ),
-                        const PopupMenuItem(
-                          value: 'share',
-                          child: Text('Share'),
-                        ),
-                      ],
+                      context: context,
+                      builder: (context) {
+                        return SizedBox(
+                          height: 200,
+                          child: Column(
+                            children: [
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Report Confession'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const TextField(
+                                              decoration: InputDecoration(
+                                                hintText: 'Reason',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                const Spacer(),
+                                                ElevatedButton(
+                                                  onPressed: () {},
+                                                  child: const Text('Report'),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.report),
+                                title: const Text('Report Confession'),
+                              ),
+                              ListTile(
+                                onTap: () async {
+                                  await FirestoreMethods()
+                                      .deletePost(snaps['postId']);
+                                  Navigator.pop(context);
+                                },
+                                leading: const Icon(Icons.delete),
+                                title: const Text('Delete Post (Admin Only)'),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title:
+                                            const Text('Reply to Confession'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const TextField(
+                                              decoration: InputDecoration(
+                                                hintText: 'Reply',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                const Spacer(),
+                                                ElevatedButton(
+                                                  onPressed: () {},
+                                                  child: const Text('Reply'),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                leading: const Icon(Icons.reply),
+                                title: const Text(
+                                    'Reply to Confession Anonymously'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                   icon: const Icon(Icons.more_vert),
@@ -386,16 +468,28 @@ class Post extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: const Text(
-                  'View all 129 comments',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('confession')
+                      .doc(snaps['postId'])
+                      .collection('comments')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SizedBox();
+                    }
+
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'View all ${snapshot.data!.docs.length} comments',
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ],
         ),
