@@ -13,6 +13,7 @@ class ConfessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('JU Confession'),
@@ -70,6 +71,7 @@ class ConfessionPage extends StatelessWidget {
             }
 
             return ListView.builder(
+              physics: const BouncingScrollPhysics(),
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 return Padding(

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_face_pile/flutter_face_pile.dart';
+import 'package:juconfession/components/comment.card.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
 
+import '../Screens/comments.Screen.dart';
 import '../provider/theme_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -253,7 +255,16 @@ class Post extends StatelessWidget {
                 ),
                 const SizedBox(width: 20),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Comments(
+                            snaps: snaps,
+                          ),
+                        ),
+                      );
+                    },
                     icon: const Icon(
                       Icons.comment,
                       color: Colors.grey,
@@ -365,7 +376,16 @@ class Post extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Comments(
+                      snaps: snaps,
+                    ),
+                  ),
+                );
+              },
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.symmetric(horizontal: 5),
