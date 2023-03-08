@@ -309,7 +309,18 @@ class _VideoChatState extends State<VideoChat> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      connect(_controller.text);
+                                      if (_controller.text.isNotEmpty &&
+                                          _controller.text.length > 5) {
+                                        connect(_controller.text);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Please enter Your Friend peer id'),
+                                          ),
+                                        );
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,

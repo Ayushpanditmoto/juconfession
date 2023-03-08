@@ -5,9 +5,9 @@ pickImage(ImageSource source) async {
   final picker = ImagePicker();
   XFile? pickedFile = await picker.pickImage(source: source);
   if (pickedFile != null) {
-    return await pickedFile.readAsBytes();
+    return pickedFile.readAsBytes();
   }
-  return XFile('');
+  return null;
 }
 
 showSnackBar(String message, BuildContext context) {

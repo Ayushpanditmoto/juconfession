@@ -7,7 +7,7 @@ class CustomTheme {
     return ThemeData(
       useMaterial3: true,
       fontFamily: GoogleFonts.poppins(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w400,
       ).fontFamily,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -23,7 +23,7 @@ class CustomTheme {
     return ThemeData(
       useMaterial3: true,
       fontFamily: GoogleFonts.poppins(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w400,
       ).fontFamily,
       brightness: Brightness.dark,
       elevatedButtonTheme: ElevatedButtonThemeData(
