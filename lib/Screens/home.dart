@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/all_user.dart';
 import 'package:juconfession/Screens/confession.dart';
+import 'package:juconfession/Screens/trending.dart';
 import 'package:juconfession/Screens/video_chat.dart';
 
 import 'addconfess.screen.dart';
@@ -29,17 +30,6 @@ class _ConfessionState extends State<Confession> {
     _pageController.dispose();
     super.dispose();
   }
-
-  // void getName() async {
-  //   DocumentSnapshot snapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(
-  //         FirebaseAuth.instance.currentUser!.uid,
-  //       )
-  //       .get();
-
-  //   name = snapshot['username'];
-  // }
 
   void navigationTapped(int page) {
     _pageController.jumpToPage(page);
@@ -78,7 +68,7 @@ class _ConfessionState extends State<Confession> {
                 });
               },
               icon: Icon(
-                Icons.photo_camera_front_sharp,
+                Icons.trending_up_sharp,
                 color: _page == 1 ? Colors.blue : Colors.grey,
               ),
             ),
@@ -92,8 +82,22 @@ class _ConfessionState extends State<Confession> {
                 });
               },
               icon: Icon(
-                Icons.add,
+                Icons.photo_camera_front_sharp,
                 color: _page == 2 ? Colors.blue : Colors.grey,
+              ),
+            ),
+            IconButton(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onPressed: () {
+                setState(() {
+                  _page = 3;
+                  navigationTapped(_page);
+                });
+              },
+              icon: Icon(
+                Icons.add,
+                color: _page == 3 ? Colors.blue : Colors.grey,
               ),
             ),
             IconButton(
@@ -114,7 +118,7 @@ class _ConfessionState extends State<Confession> {
               },
               icon: Icon(
                 Icons.video_chat_outlined,
-                color: _page == 3 ? Colors.blue : Colors.grey,
+                color: _page == 5 ? Colors.blue : Colors.grey,
               ),
             ),
             IconButton(
@@ -122,13 +126,13 @@ class _ConfessionState extends State<Confession> {
               splashColor: Colors.transparent,
               onPressed: () {
                 setState(() {
-                  _page = 4;
+                  _page = 6;
                   navigationTapped(_page);
                 });
               },
               icon: Icon(
                 Icons.person,
-                color: _page == 4 ? Colors.blue : Colors.grey,
+                color: _page == 6 ? Colors.blue : Colors.grey,
               ),
             ),
           ],
@@ -140,6 +144,7 @@ class _ConfessionState extends State<Confession> {
         onPageChanged: navigationTapped,
         children: const [
           ConfessionPage(),
+          TrendingPage(),
           AllUsers(),
           AddConfession(),
           VideoChat(),
