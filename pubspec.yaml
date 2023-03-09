@@ -53,6 +53,7 @@ dependencies:
   permission_handler: ^10.2.0
   provider: ^6.0.5
   shared_preferences: ^2.0.18
+  shimmer: ^2.0.0
   uuid: ^3.0.7
 
 dev_dependencies:

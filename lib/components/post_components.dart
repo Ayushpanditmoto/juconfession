@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_face_pile/flutter_face_pile.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
-
+import 'package:shimmer/shimmer.dart';
 import '../Screens/comments.Screen.dart';
 import '../Screens/full.screen.image.dart';
 import '../provider/theme_provider.dart';
@@ -17,7 +17,8 @@ import '../services/firestore.methods.dart';
 
 class Post extends StatelessWidget {
   final Map<String, dynamic> snaps;
-  const Post({super.key, required this.snaps});
+  final int index;
+  const Post({super.key, required this.snaps, required this.index});
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
@@ -51,19 +52,20 @@ class Post extends StatelessWidget {
                           image: imageProvider, fit: BoxFit.cover),
                     ),
                   ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
+                  placeholder: (context, url) => ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
-                // CircleAvatar(
-                //   radius: 20,
-                //   backgroundImage: NetworkImage(snaps['photoUrl'] != ''
-                //           ? snaps['photoUrl']
-                //           : 'https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg'
-
-                //       // 'https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg',
-                //       ),
-                // ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +122,7 @@ class Post extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        "#1",
+                        "#${index + 1}",
                         style: TextStyle(
                           fontSize: 12,
                           color: theme.themeMode == ThemeMode.light
@@ -182,9 +184,10 @@ class Post extends StatelessWidget {
                               ),
                               ListTile(
                                 onTap: () async {
+                                  Navigator.pop(context);
+
                                   await FirestoreMethods()
                                       .deletePost(snaps['postId']);
-                                  Navigator.pop(context);
                                 },
                                 leading: const Icon(Icons.delete),
                                 title: const Text('Delete Post (Admin Only)'),
@@ -257,8 +260,18 @@ class Post extends StatelessWidget {
                 child: CachedNetworkImage(
                   height: 150,
                   imageUrl: snaps['photoUrl'],
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
+                  placeholder: (context, url) => SizedBox(
+                    height: 100,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 150,
+                        height: 100,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),

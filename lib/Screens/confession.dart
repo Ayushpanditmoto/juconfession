@@ -49,40 +49,46 @@ class ConfessionPage extends StatelessWidget {
           ),
         ),
       ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('confession')
-              .orderBy('datePublished', descending: true)
-              .snapshots(),
-          builder: (context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return const Center(
-                child: Text('Something went wrong'),
-              );
-            } else if (snapshot.data!.docs.isEmpty) {
-              return const Center(
-                child: Text('No Confession'),
-              );
-            }
-
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Post(
-                    snaps: snapshot.data!.docs[index].data(),
-                  ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 1));
+        },
+        child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('confession')
+                .orderBy('datePublished', descending: true)
+                .snapshots(),
+            builder: (context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
-              },
-            );
-          }),
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Something went wrong'),
+                );
+              } else if (snapshot.data!.docs.isEmpty) {
+                return const Center(
+                  child: Text('No Confession'),
+                );
+              }
+
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Post(
+                      snaps: snapshot.data!.docs[index].data(),
+                      index: snapshot.data!.docs.length - index - 1,
+                    ),
+                  );
+                },
+              );
+            }),
+      ),
     );
   }
 }
