@@ -52,6 +52,7 @@ class _CommentsState extends State<Comments> {
           }
 
           return ListView.builder(
+            reverse: true,
             itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index) {
               return CommentCard(

@@ -6,6 +6,7 @@ class UserModel {
   final String photoUrl;
   final String username;
   final String bio;
+  final String batch;
   final List followers;
   final List following;
   final bool isVerified;
@@ -17,6 +18,7 @@ class UserModel {
     required this.photoUrl,
     required this.email,
     required this.bio,
+    required this.batch,
     required this.followers,
     required this.following,
     this.isVerified = false,
@@ -32,6 +34,7 @@ class UserModel {
       email: snapshot["email"],
       photoUrl: snapshot["photoUrl"],
       bio: snapshot["bio"],
+      batch: snapshot["batch"],
       followers: snapshot["followers"],
       following: snapshot["following"],
       isVerified: snapshot["isVerified"],
@@ -45,6 +48,7 @@ class UserModel {
         "email": email,
         "photoUrl": photoUrl,
         "bio": bio,
+        "batch": batch,
         "followers": followers,
         "following": following,
         "isVerified": isVerified,

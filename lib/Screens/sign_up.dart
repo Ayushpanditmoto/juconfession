@@ -9,6 +9,7 @@ import 'package:juconfession/utils/utils.dart';
 
 import '../components/custom_text_field.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -18,13 +19,26 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController departmentController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   bool isLogin = false;
+  bool isImageUploaded = false;
   File? _image;
+  String? selectedBatch;
+  List<String> batch = [
+    '2015-2019',
+    '2016-2020',
+    '2017-2021',
+    '2018-2022',
+    '2019-2023',
+    '2020-2024',
+    '2021-2025',
+    '2022-2026',
+  ];
 
   @override
   void dispose() {
@@ -83,11 +97,14 @@ class _SignUpState extends State<SignUp> {
                                 MemoryImage(_image!.readAsBytesSync()),
                             backgroundColor: Colors.red,
                           )
-                        : const CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                                'https://i.stack.imgur.com/l60Hf.png'),
-                            backgroundColor: Colors.red,
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: CachedNetworkImage(
+                              imageUrl: 'https://i.stack.imgur.com/l60Hf.png',
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                     Positioned(
                       bottom: 0,
@@ -99,65 +116,103 @@ class _SignUpState extends State<SignUp> {
                     )
                   ],
                 ),
-                TextEnterArea(
-                  hintText: 'Name',
-                  controller: nameController,
-                  prefixIcon: const Icon(
-                    Icons.person,
-                    color: Colors.black54,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                ),
-                TextEnterArea(
-                  hintText: 'Department',
-                  controller: departmentController,
-                  prefixIcon: const Icon(
-                    Icons.person_search,
-                    color: Colors.black54,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                ),
-                //username text field
-                TextEnterArea(
-                  hintText: 'Username',
-                  controller: usernameController,
-                  prefixIcon: const Icon(
-                    Icons.person,
-                    color: Colors.black54,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                ),
-                TextEnterArea(
-                  hintText: 'Email',
-                  controller: emailController,
-                  prefixIcon: const Icon(
-                    Icons.email,
-                    color: Colors.black54,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
+                Form(
+                  key: _formKey,
+                  child: Column(children: [
+                    TextEnterArea(
+                        hintText: 'Name',
+                        controller: nameController,
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: Colors.black54,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: (p0) {
+                          if (p0!.isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          return null;
+                        }),
+                    TextEnterArea(
+                        hintText: 'Department',
+                        controller: departmentController,
+                        prefixIcon: const Icon(
+                          Icons.person_search,
+                          color: Colors.black54,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: (p0) {
+                          if (p0!.isEmpty) {
+                            return 'Please enter your department';
+                          }
+                          return null;
+                        }),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButtonFormField(
+                          value: selectedBatch,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          hint: const Text("Your Batch"),
+                          items: batch
+                              .map((e) =>
+                                  DropdownMenuItem(value: e, child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedBatch = value.toString();
+                            });
+                          }),
+                    ),
+
+                    TextEnterArea(
+                        hintText: 'Email',
+                        controller: emailController,
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.black54,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: (p0) {
+                          if (p0!.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        }),
+// password text field
+                    TextEnterArea(
+                        hintText: 'Password',
+                        controller: passwordController,
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.black54,
+                        ),
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: false,
+                        textInputAction: TextInputAction.done,
+                        validator: (p0) {
+                          if (p0!.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        }),
+                  ]),
                 ),
 
-                // password text field
-                TextEnterArea(
-                  hintText: 'Password',
-                  controller: passwordController,
-                  prefixIcon: const Icon(
-                    Icons.lock,
-                    color: Colors.black54,
-                  ),
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: false,
-                  textInputAction: TextInputAction.done,
-                ),
                 const SizedBox(height: 10),
                 // login button
                 ElevatedButton(
                   onPressed: () async {
                     try {
+                      if (_formKey.currentState!.validate() == false) return;
+                      if (_image == null) {
+                        return showSnackBar('Please select an image', context);
+                      }
                       setState(() {
                         isLogin = true;
                       });
@@ -165,6 +220,7 @@ class _SignUpState extends State<SignUp> {
                           email: emailController.text,
                           password: passwordController.text,
                           name: nameController.text,
+                          batch: selectedBatch!,
                           image: File(_image!.path).readAsBytesSync(),
                           department: departmentController.text);
 

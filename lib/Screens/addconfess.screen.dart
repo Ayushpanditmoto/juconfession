@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:juconfession/provider/theme_provider.dart';
+import 'package:juconfession/services/cloudinary.service.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import 'package:provider/provider.dart';
 
@@ -106,10 +107,14 @@ class _AddConfessionState extends State<AddConfession> {
           child: const Text('Select from gallery'),
           onPressed: () async {
             Uint8List? image = await pickImage(ImageSource.gallery);
+
             if (image != null) {
               setState(() {
                 _image = image;
               });
+              String? imageLink =
+                  await Cloud.uploadImageToStorage(_image!, 'confessions');
+              debugPrint(imageLink.toString());
             } else {
               showSnackBar('No image selected', context);
             }

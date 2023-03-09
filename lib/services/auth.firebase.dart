@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:juconfession/services/storage.firebase.dart';
 import '../model/user.model.dart';
+import 'cloudinary.service.dart';
 
 class AuthMethod {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final StorageMethods _storageMethods = StorageMethods();
 
   Future<UserModel> getUserDetails() async {
     User? currentUser = _auth.currentUser;
@@ -29,6 +28,7 @@ class AuthMethod {
     required String email,
     required String password,
     required String name,
+    required String batch,
     required String department,
     required Uint8List image,
   }) async {
@@ -38,7 +38,8 @@ class AuthMethod {
           password.isEmpty ||
           name.isEmpty ||
           department.isEmpty ||
-          image.isEmpty) {
+          image.isEmpty ||
+          batch.isEmpty) {
         res = "Please fill all the fields";
       } else {
         UserCredential userCredential =
@@ -47,22 +48,28 @@ class AuthMethod {
           password: password,
         );
 
-        String imageUrl = await _storageMethods.uploadImageToStorage(
-          'ProfileImages',
-          image,
-          false,
-        );
+        //cloudinary
+        String? imageLink =
+            await Cloud.uploadImageToStorage(image, 'ProfileImages');
+
+        //fire base storage
+        // String imageUrl = await _storageMethods.uploadImageToStorage(
+        //   'ProfileImages',
+        //   image,
+        //   false,
+        // );
 
         User? user = userCredential.user;
         if (user != null) {
           user.updateDisplayName(name);
-          user.updatePhotoURL(imageUrl);
+          user.updatePhotoURL(imageLink!);
 
           UserModel users = UserModel(
             username: name,
             uid: user.uid,
             email: email,
-            photoUrl: imageUrl,
+            batch: batch,
+            photoUrl: imageLink,
             bio: '',
             followers: [],
             following: [],
