@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -36,10 +37,21 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             Row(
               children: [
-                const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      "https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg"),
-                  radius: 18,
+                CachedNetworkImage(
+                  imageUrl:
+                      "https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg",
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 36.0,
+                    height: 36.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
+                  ),
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

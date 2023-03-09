@@ -9,6 +9,7 @@ import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
 
 import '../Screens/comments.Screen.dart';
+import '../Screens/full.screen.image.dart';
 import '../provider/theme_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -242,12 +243,24 @@ class Post extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             if (snaps['photoUrl'] != "")
-              CachedNetworkImage(
-                height: 150,
-                imageUrl: snaps['photoUrl'],
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FullScreenImage(
+                        imageUrl: snaps['photoUrl'],
+                      ),
+                    ),
+                  );
+                },
+                child: CachedNetworkImage(
+                  height: 150,
+                  imageUrl: snaps['photoUrl'],
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
             const SizedBox(height: 10),
             Container(
