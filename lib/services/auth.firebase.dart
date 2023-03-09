@@ -62,7 +62,7 @@ class AuthMethod {
         User? user = userCredential.user;
         if (user != null) {
           user.updateDisplayName(name);
-          user.updatePhotoURL(imageLink!);
+          user.updatePhotoURL(imageLink);
 
           UserModel users = UserModel(
             username: name,

@@ -15,7 +15,7 @@ class Cloud {
     cloudName: cloudName,
   );
 
-  static Future<String?> uploadImageToStorage(
+  static Future<String> uploadImageToStorage(
       Uint8List image, String folder) async {
     try {
       var compressedImage = await FlutterImageCompress.compressWithList(
@@ -32,10 +32,10 @@ class Cloud {
           debugPrint('Progress: $count/$total');
         },
       );
-      return res.secureUrl;
+      return res.secureUrl ?? "";
     } catch (e) {
       debugPrint(e.toString());
-      return null;
+      return "";
     }
   }
 }

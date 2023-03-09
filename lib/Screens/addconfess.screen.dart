@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:juconfession/provider/theme_provider.dart';
-import 'package:juconfession/services/cloudinary.service.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import 'package:provider/provider.dart';
 
@@ -112,9 +111,6 @@ class _AddConfessionState extends State<AddConfession> {
               setState(() {
                 _image = image;
               });
-              String? imageLink =
-                  await Cloud.uploadImageToStorage(_image!, 'confessions');
-              debugPrint(imageLink.toString());
             } else {
               showSnackBar('No image selected', context);
             }
@@ -191,7 +187,7 @@ class _AddConfessionState extends State<AddConfession> {
                     gender: selectedGender!,
                     faculty: selectedFaculty!,
                     year: selectedYear!,
-                    image: _image,
+                    image: _image ?? Uint8List(0),
                   );
 
                   if (rev == "success") {

@@ -3,28 +3,26 @@ import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/model/post.model.dart';
-import 'package:juconfession/services/storage.firebase.dart';
+
+import 'cloudinary.service.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<String> uploadConfess({
     required String confession,
-    Uint8List? image,
+    required Uint8List image,
     required String gender,
     required String faculty,
     required String department,
     required String year,
     required String uid,
   }) async {
-    String retVal = 'error';
+    String retVal = 'Some error occurred';
 
     try {
-      String photoUrl = await StorageMethods().uploadImageToStorage(
-        'confession',
-        image!,
-        true,
-      );
+      debugPrint('Uploading confession to firestore');
+      String photoUrl = await Cloud.uploadImageToStorage(image, 'confessions');
 
       String postId = const Uuid().v4();
 
@@ -35,7 +33,7 @@ class FirestoreMethods {
         postId: postId,
         datePublished: DateTime.now(),
         postUrl: '',
-        photoUrl: photoUrl.isEmpty ? '' : photoUrl,
+        photoUrl: photoUrl,
         gender: gender,
         faculty: faculty,
         department: department,
@@ -51,7 +49,6 @@ class FirestoreMethods {
     } catch (e) {
       debugPrint(e.toString());
     }
-
     return retVal;
   }
 

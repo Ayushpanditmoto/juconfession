@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +34,35 @@ class Post extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: NetworkImage(snaps['photoUrl']
-
-                      // 'https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg',
-                      ),
+                CachedNetworkImage(
+                  imageUrl: snaps['photoUrl'] != ''
+                      ? snaps['photoUrl']
+                      : 'https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg',
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
+                    ),
+                  ),
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
+                // CircleAvatar(
+                //   radius: 20,
+                //   backgroundImage: NetworkImage(snaps['photoUrl'] != ''
+                //           ? snaps['photoUrl']
+                //           : 'https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg'
+
+                //       // 'https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg',
+                //       ),
+                // ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,6 +241,15 @@ class Post extends StatelessWidget {
                   const TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
             ),
             const SizedBox(height: 10),
+            if (snaps['photoUrl'] != "")
+              CachedNetworkImage(
+                height: 150,
+                imageUrl: snaps['photoUrl'],
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+            const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -299,15 +331,6 @@ class Post extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image(
-                height: 150,
-                image: NetworkImage(snaps['photoUrl']),
-              ),
-            ),
-            const SizedBox(height: 10),
             const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
