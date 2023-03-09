@@ -289,6 +289,11 @@ class _AddConfessionState extends State<AddConfession> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: DropdownButtonFormField(
+                    onTap: () {
+                      setState(() {
+                        selectedDepartment = null;
+                      });
+                    },
                     value: selectedFaculty,
                     icon: const Icon(Icons.arrow_drop_down_circle),
                     hint: const Text("Faculty"),
@@ -305,13 +310,7 @@ class _AddConfessionState extends State<AddConfession> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: DropdownButtonFormField(
-                      value: selectedFaculty == faculty[0]
-                          ? selectedDepartment = engineeringDepartment[0]
-                          : selectedFaculty == faculty[1]
-                              ? selectedDepartment = scienceDepartment[0]
-                              : selectedFaculty == faculty[2]
-                                  ? selectedDepartment = artsDepartment[0]
-                                  : selectedDepartment = otherDepartment[0],
+                      value: selectedDepartment,
                       icon: const Icon(Icons.arrow_drop_down_circle),
                       hint: const Text("Department"),
                       items: selectedFaculty == faculty[0]

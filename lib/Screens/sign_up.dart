@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:juconfession/services/auth.firebase.dart';
-import 'package:juconfession/utils/route.dart';
 import 'package:juconfession/utils/utils.dart';
 
 import '../components/custom_text_field.dart';

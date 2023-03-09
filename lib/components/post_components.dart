@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_face_pile/flutter_face_pile.dart';
-import 'package:juconfession/components/comment.card.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
 

@@ -10,34 +10,26 @@ class AllUsers extends StatelessWidget {
           title: const Text('All Verified Users'),
         ),
         body: Column(
-          children: const [
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('User 1'),
-              subtitle: Text('User 1 Email'),
-              trailing: Icon(
-                Icons.verified,
-                color: Colors.blue,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            "https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg"),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('User 1'),
-              subtitle: Text('User 1 Email'),
-              trailing: Icon(
-                Icons.verified,
-                color: Colors.blue,
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('User 1'),
-              subtitle: Text('User 1 Email'),
-              trailing: Icon(
-                Icons.verified,
-                color: Colors.blue,
-              ),
-            ),
+            )
           ],
         ));
   }
