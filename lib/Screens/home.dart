@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/all_user.dart';
 import 'package:juconfession/Screens/confession.dart';
+import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/Screens/trending.dart';
 import 'package:juconfession/Screens/video_chat.dart';
 
@@ -148,9 +149,7 @@ class _ConfessionState extends State<Confession> {
           AllUsers(),
           AddConfession(),
           VideoChat(),
-          Center(
-            child: Text('Profile'),
-          ),
+          ProfileScreen(),
         ],
       ),
     );
