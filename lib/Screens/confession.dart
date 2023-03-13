@@ -2,11 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/post_components.dart';
-import 'package:juconfession/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/theme_provider.dart';
-import '../provider/user.provider.dart';
 import '../services/auth.firebase.dart';
 
 class ConfessionPage extends StatelessWidget {

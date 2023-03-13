@@ -119,7 +119,7 @@ class _CommentsState extends State<Comments> {
                     await FirestoreMethods().postComment(
                       widget.snaps['postId'],
                       commentEditingController.text,
-                      widget.snaps['uid'],
+                      user!.uid,
                       user!.displayName,
                       user!.photoURL,
                     );

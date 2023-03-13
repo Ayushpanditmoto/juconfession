@@ -1,9 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:juconfession/utils/utils.dart';
+import 'package:juconfession/model/user.model.dart';
 
-import '../firebase_options.dart';
-import '../services/auth.firebase.dart';
+class UserProvider with ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class UserProvider with ChangeNotifier {}
+  User? _user;
+
+  User? get getUser => _user;
+
+  void setUser(User? user) {
+    _user = user;
+    notifyListeners();
+  }
+
+  Future<UserModel> getUserDetails(String uid) async {
+    try {
+      final DocumentSnapshot documentSnapshot =
+          await _firestore.collection('users').doc(uid).get();
+
+      return UserModel.fromSnap(documentSnapshot);
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

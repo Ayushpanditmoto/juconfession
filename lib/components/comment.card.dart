@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../Screens/profile.screen.dart';
 import '../provider/theme_provider.dart';
 
 class CommentCard extends StatefulWidget {
@@ -37,20 +38,33 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             Row(
               children: [
-                CachedNetworkImage(
-                  imageUrl: widget.snaps['profilePic'],
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: 36.0,
-                    height: 36.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(
+                          uid: widget.snaps['uid'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: CachedNetworkImage(
+                    imageUrl: widget.snaps['profilePic'],
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 36.0,
+                      height: 36.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
+                      ),
                     ),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

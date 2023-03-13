@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/all_user.dart';
 import 'package:juconfession/Screens/confession.dart';
@@ -143,13 +145,15 @@ class _ConfessionState extends State<Confession> {
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: navigationTapped,
-        children: const [
-          ConfessionPage(),
-          TrendingPage(),
-          AllUsers(),
-          AddConfession(),
-          VideoChat(),
-          ProfileScreen(),
+        children: [
+          const ConfessionPage(),
+          const TrendingPage(),
+          const AllUsers(),
+          const AddConfession(),
+          const VideoChat(),
+          ProfileScreen(
+            uid: FirebaseAuth.instance.currentUser!.uid,
+          ),
         ],
       ),
     );
