@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/comment.card.dart';
 import 'package:juconfession/services/firestore.methods.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Comments extends StatefulWidget {
   final Map<String, dynamic> snaps;
@@ -70,10 +72,32 @@ class _CommentsState extends State<Comments> {
           padding: const EdgeInsets.only(left: 16, right: 8),
           child: Row(
             children: [
-              const CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://tdqmcwfqgmcuhnhupuja.supabase.co/storage/v1/object/public/example/IMG_20230307_123459_297.jpg"),
-                radius: 18,
+              CachedNetworkImage(
+                imageUrl: user!.photoURL!,
+                imageBuilder: (context, imageProvider) => Container(
+                  width: 36.0,
+                  height: 36.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(40)),
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
               Expanded(
                 child: Padding(

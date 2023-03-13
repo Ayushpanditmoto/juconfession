@@ -38,8 +38,7 @@ class _CommentCardState extends State<CommentCard> {
             Row(
               children: [
                 CachedNetworkImage(
-                  imageUrl:
-                      "https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg",
+                  imageUrl: widget.snaps['profilePic'],
                   imageBuilder: (context, imageProvider) => Container(
                     width: 36.0,
                     height: 36.0,
