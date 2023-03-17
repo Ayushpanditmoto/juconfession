@@ -213,19 +213,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           //verify icon
 
                           const Spacer(),
+
+                          ///follow
                           if (user!.uid != widget.uid)
-                            
-                                TextButton(
+                            snapshot.data!['followers'].contains(user!.uid)
+                                ? TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        snapshot.data!['followers']
-                                            .remove(user!.uid);
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(widget.uid)
+                                          .update({
+                                        'followers':
+                                            FieldValue.arrayRemove([user!.uid])
+                                      });
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(user!.uid)
+                                          .update({
+                                        'following':
+                                            FieldValue.arrayRemove([widget.uid])
                                       });
                                     },
                                     style: ButtonStyle(
                                       backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.blue),
+                                          MaterialStateProperty.all(Colors.red),
                                     ),
                                     child: const Text(
                                       'Unfollow',
@@ -236,9 +247,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   )
                                 : TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        snapshot.data!['followers']
-                                            .add(user!.uid);
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(widget.uid)
+                                          .update({
+                                        'followers':
+                                            FieldValue.arrayUnion([user!.uid])
+                                      });
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(user!.uid)
+                                          .update({
+                                        'following':
+                                            FieldValue.arrayUnion([widget.uid])
                                       });
                                     },
                                     style: ButtonStyle(
@@ -253,6 +274,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                   ),
+
+                          ///
+
                           if (user!.uid != widget.uid)
                             const SizedBox(
                               width: 10,
