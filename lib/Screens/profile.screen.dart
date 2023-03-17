@@ -17,8 +17,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isFollowing = false;
-
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -42,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                snapshot.data!['username'],
+                snapshot.data!['name'],
                 style: const TextStyle(
                   fontSize: 17,
                 ),
@@ -176,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 5,
                           ),
                           const Text(
-                            'Followers',
+                            'Following',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -204,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Column(
                             children: [
                               Text(
-                                snapshot.data!['username'],
+                                snapshot.data!['name'],
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -216,11 +214,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           const Spacer(),
                           if (user!.uid != widget.uid)
-                            isFollowing
-                                ? TextButton(
+                            
+                                TextButton(
                                     onPressed: () {
                                       setState(() {
-                                        isFollowing = false;
+                                        snapshot.data!['followers']
+                                            .remove(user!.uid);
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.blue),
+                                    ),
+                                    child: const Text(
+                                      'Unfollow',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        snapshot.data!['followers']
+                                            .add(user!.uid);
                                       });
                                     },
                                     style: ButtonStyle(
@@ -233,22 +251,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),
-                                    ),
-                                  )
-                                : TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isFollowing = true;
-                                      });
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.blue),
-                                    ),
-                                    child: const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
                                     ),
                                   ),
                           if (user!.uid != widget.uid)
@@ -317,30 +319,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                         ],
                       ),
-                      const Text(
-                        'B.E MME 2nd Year',
-                        style: TextStyle(
+                      Text(
+                        snapshot.data!['faculty'],
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        snapshot.data!['department'],
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        snapshot.data!['batch'],
+                        style: const TextStyle(
+                          fontSize: 15,
                         ),
                       ),
                     ],
                   ),
                 ),
                 //bio data
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 10,
-                  ),
-                  child: const Text(
-                    'I am a Full Stack MERN and Flutter Developer. I am also a Competitive Programmer. I am a 2nd year student of B.E Mechanical Engineering at NIT Hamirpur. I am a self taught developer. I am also a content creator on YouTube. I am also a part of the team of the college magazine. I am also a part of the team of the college website. I am also a part of the team of the college app. I am',
-                    style: TextStyle(
-                      fontSize: 15,
+                if (snapshot.data!['bio'] != '' &&
+                    snapshot.data!['bio'] != null)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 10,
+                    ),
+                    child: Text(
+                      snapshot.data!['bio'],
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
                     ),
                   ),
-                ),
+                if (snapshot.data!['bio'] == '' ||
+                    snapshot.data!['bio'] == null)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 10,
+                    ),
+                    child: const Text(
+                      'Make your Profile more attractive by adding a bio',
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
                 //upload photos button
                 Container(
                   width: double.infinity,

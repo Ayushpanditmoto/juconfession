@@ -1,9 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:juconfession/Screens/profile.screen.dart';
+import 'package:juconfession/components/all_user_component.dart';
 import 'package:juconfession/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class AllUsers extends StatelessWidget {
+class AllUsers extends StatefulWidget {
   const AllUsers({super.key});
+
+  @override
+  State<AllUsers> createState() => _AllUsersState();
+}
+
+class _AllUsersState extends State<AllUsers> {
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +35,10 @@ class AllUsers extends StatelessWidget {
               ),
             ),
             child: TextFormField(
+              controller: searchController,
+              onChanged: (value) {
+                setState(() {});
+              },
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Search',
@@ -37,65 +51,49 @@ class AllUsers extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(10),
-              physics: const BouncingScrollPhysics(),
-              itemCount: 100,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.9,
-              ),
-              itemBuilder: (context, index) {
-                return Card(
-                  child: SizedBox(
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: const [
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              ),
-                              child: Image(
-                                image: AssetImage(
-                                  'assets/girl.jpg',
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: Icon(
-                                Icons.verified,
-                                color: Colors.blue,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ],
+            child: StreamBuilder(
+                stream: searchController.text.isEmpty
+                    ? FirebaseFirestore.instance.collection('users').snapshots()
+                    : FirebaseFirestore.instance
+                        .collection('users')
+                        .where('name',
+                            isGreaterThanOrEqualTo: searchController.text)
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: snapshot.data!.docs.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, childAspectRatio: 0.8),
+                    itemBuilder: (context, index) {
+                      return UserComponent(
+                        name: snapshot.data!.docs[index].data()['name'],
+                        branch: snapshot.data!.docs[index].data()['department'],
+                        year: snapshot.data!.docs[index].data()['batch'],
+                        imageUrl: snapshot.data!.docs[index].data()['photoUrl'],
+                        isAdmin: snapshot.data!.docs[index].data()['isAdmin'] ??
+                            false,
+                        tap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                uid: snapshot.data!.docs[index].id,
                               ),
                             ),
-                          ],
-                        ),
-                        const Text(
-                          'Ayush Kumar Pandit',
-                        ),
-                        const Text(
-                          'Metallurgy',
-                        ),
-                        const Text(
-                          '2nd Year',
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                }),
           ),
         ],
       ),

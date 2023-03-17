@@ -91,11 +91,11 @@ class _CommentCardState extends State<CommentCard> {
                     ),
                   ),
                 ),
-                const Icon(
-                  Icons.favorite,
-                  color: Colors.grey,
-                  size: 18,
-                ),
+                // const Icon(
+                //   Icons.favorite,
+                //   color: Colors.grey,
+                //   size: 18,
+                // ),
               ],
             ),
             const SizedBox(height: 8),

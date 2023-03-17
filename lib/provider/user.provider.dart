@@ -5,6 +5,7 @@ import 'package:juconfession/model/user.model.dart';
 
 class UserProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User? _user;
 
@@ -21,6 +22,18 @@ class UserProvider with ChangeNotifier {
           await _firestore.collection('users').doc(uid).get();
 
       return UserModel.fromSnap(documentSnapshot);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //check user is admin or not
+  Future<bool> isAdmin(String uid) async {
+    try {
+      final DocumentSnapshot documentSnapshot =
+          await _firestore.collection('users').doc(uid).get();
+
+      return (documentSnapshot.data() as dynamic)['isAdmin'];
     } catch (e) {
       rethrow;
     }

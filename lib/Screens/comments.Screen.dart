@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:juconfession/components/comment.card.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import 'package:shimmer/shimmer.dart';
+// import 'package:comment_tree/comment_tree.dart';
 
 class Comments extends StatefulWidget {
   final Map<String, dynamic> snaps;
@@ -62,6 +63,70 @@ class _CommentsState extends State<Comments> {
               );
             },
           );
+
+          //   return Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: CommentTreeWidget<Comment, Comment>(
+          //       Comment(
+          //           avatar: 'null',
+          //           userName: 'Siddharth',
+          //           content: 'felangel made felangel/cubit_and_beyond public '),
+          //       [
+          //         Comment(
+          //             avatar: 'null',
+          //             userName: 'null',
+          //             content: 'A Dart template generator which helps teams'),
+          //         Comment(
+          //             avatar: 'null',
+          //             userName: 'null',
+          //             content:
+          //                 'A Dart template generator which helps teams generator which helps teams generator which helps teams'),
+          //         Comment(
+          //             avatar: 'null',
+          //             userName: 'null',
+          //             content: 'A Dart template generator which helps teams'),
+          //         Comment(
+          //             avatar: 'null',
+          //             userName: 'null',
+          //             content:
+          //                 'A Dart template generator which helps teams generator which helps teams '),
+          //       ],
+          //       treeThemeData: const TreeThemeData(
+          //           lineColor: Color.fromARGB(255, 5, 130, 232), lineWidth: 2),
+          //       avatarRoot: (context, data) => const PreferredSize(
+          //         preferredSize: Size.fromRadius(18),
+          //         child: CircleAvatar(
+          //           radius: 18,
+          //           backgroundColor: Colors.grey,
+          //           backgroundImage: AssetImage('assets/girl.jpg'),
+          //         ),
+          //       ),
+          //       avatarChild: (context, data) => const PreferredSize(
+          //         preferredSize: Size.fromRadius(12),
+          //         child: CircleAvatar(
+          //           radius: 12,
+          //           backgroundColor: Colors.grey,
+          //           backgroundImage: AssetImage('assets/girl.jpg'),
+          //         ),
+          //       ),
+          //       contentChild: (context, data) => Container(
+          //         padding: const EdgeInsets.all(8),
+          //         decoration: BoxDecoration(
+          //           color: Colors.grey[200],
+          //           borderRadius: BorderRadius.circular(8),
+          //         ),
+          //         child: Text(data.content!),
+          //       ),
+          //       contentRoot: (context, data) => Container(
+          //         padding: const EdgeInsets.all(8),
+          //         decoration: BoxDecoration(
+          //           color: const Color.fromARGB(255, 145, 145, 145),
+          //           borderRadius: BorderRadius.circular(8),
+          //         ),
+          //         child: Text(data.content!),
+          //       ),
+          //     ),
+          //   );
         },
       ),
       bottomNavigationBar: SafeArea(

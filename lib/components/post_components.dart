@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_face_pile/flutter_face_pile.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -18,7 +17,12 @@ import '../services/firestore.methods.dart';
 class Post extends StatelessWidget {
   final Map<String, dynamic> snaps;
   final int index;
-  const Post({super.key, required this.snaps, required this.index});
+  final bool isAdminCheck;
+  const Post(
+      {super.key,
+      required this.snaps,
+      required this.index,
+      required this.isAdminCheck});
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
@@ -182,16 +186,45 @@ class Post extends StatelessWidget {
                                 leading: const Icon(Icons.report),
                                 title: const Text('Report Confession'),
                               ),
-                              ListTile(
-                                onTap: () async {
-                                  Navigator.pop(context);
+                              if (isAdminCheck == true)
+                                ListTile(
+                                  onTap: () async {
+                                    // Navigator.pop(context);
 
-                                  await FirestoreMethods()
-                                      .deletePost(snaps['postId']);
-                                },
-                                leading: const Icon(Icons.delete),
-                                title: const Text('Delete Post (Admin Only)'),
-                              ),
+                                    // await FirestoreMethods()
+                                    //     .deletePost(snaps['postId']);
+                                    //show dialog
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text('Delete Post'),
+                                          content: const Text(
+                                              'Are you sure you want to delete this post?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                Navigator.pop(context);
+                                                await FirestoreMethods()
+                                                    .deletePost(
+                                                        snaps['postId']);
+                                              },
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  leading: const Icon(Icons.delete),
+                                  title: const Text('Delete Post (Admin Only)'),
+                                ),
                               ListTile(
                                 onTap: () {
                                   showDialog(
@@ -422,88 +455,150 @@ class Post extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: FacePile(
-                          faces: [
-                            FaceHolder(
-                              id: '1',
-                              name: 'user 1',
-                              avatar: const NetworkImage(
-                                'https://i.pravatar.cc/300?img=1',
+            //get all likes users
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('posts')
+                    .doc(snaps['postId'])
+                    .collection('likes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            // SizedBox(
+                            //   width: 100,
+                            //   child: InkWell(
+                            //     onTap: () {
+                            //       //show modal bottom sheet
+                            //       showModalBottomSheet(
+                            //         context: context,
+                            //         builder: (context) => SizedBox(
+                            //           height:
+                            //               MediaQuery.of(context).size.height *
+                            //                   0.8,
+                            //           child: Column(
+                            //             children: [
+                            //               const SizedBox(
+                            //                 height: 10,
+                            //               ),
+                            //               const Text(
+                            //                 'Liked by',
+                            //                 style: TextStyle(
+                            //                   fontSize: 20,
+                            //                   // fontWeight: FontWeight.bold,
+                            //                 ),
+                            //               ),
+                            //               const SizedBox(
+                            //                 height: 10,
+                            //               ),
+                            //               Expanded(
+                            //                 child: ListView.builder(
+                            //                   itemCount:
+                            //                       snapshot.data?.docs.length ??
+                            //                           0,
+                            //                   itemBuilder: (context, index) {
+                            //                     return ListTile(
+                            //                       leading: CircleAvatar(
+                            //                         backgroundImage:
+                            //                             NetworkImage(snapshot
+                            //                                     .data!
+                            //                                     .docs[index]
+                            //                                     .data()[
+                            //                                 'photoUrl']),
+                            //                       ),
+                            //                       title: Text(
+                            //                         snapshot.data!.docs[index]
+                            //                             .data()['username'],
+                            //                       ),
+                            //                     );
+                            //                   },
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //       );
+                            //     },
+                            //     child: FacePile(
+                            //       faces: [
+                            //         FaceHolder(
+                            //           id: '1',
+                            //           name: 'user 1',
+                            //           avatar: const NetworkImage(
+                            //             'https://i.pravatar.cc/300?img=1',
+                            //           ),
+                            //         ),
+                            //         FaceHolder(
+                            //           id: '2',
+                            //           name: 'user 2',
+                            //           avatar: const NetworkImage(
+                            //               'https://i.pravatar.cc/300?img=2'),
+                            //         ),
+                            //         FaceHolder(
+                            //           id: '3',
+                            //           name: 'user 3',
+                            //           avatar: const NetworkImage(
+                            //               'https://i.pravatar.cc/300?img=3'),
+                            //         ),
+                            //       ],
+                            //       faceSize: 30,
+                            //       facePercentOverlap: .3,
+                            //       borderColor: Colors.white,
+                            //     ),
+                            //   ),
+                            // ),
+                            DefaultTextStyle(
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.themeMode == ThemeMode.light
+                                    ? Colors.black
+                                    : Colors.white,
                               ),
-                            ),
-                            FaceHolder(
-                              id: '2',
-                              name: 'user 2',
-                              avatar: const NetworkImage(
-                                  'https://i.pravatar.cc/300?img=2'),
-                            ),
-                            FaceHolder(
-                              id: '3',
-                              name: 'user 3',
-                              avatar: const NetworkImage(
-                                  'https://i.pravatar.cc/300?img=3'),
+                              child: Text('${snaps['likes'].length} Likes'),
                             ),
                           ],
-                          faceSize: 30,
-                          facePercentOverlap: .3,
-                          borderColor: Colors.white,
-                        ),
-                      ),
-                      DefaultTextStyle(
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: theme.themeMode == ThemeMode.light
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                        child: Text('${snaps['likes'].length} Likes'),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Vikas ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.themeMode == ThemeMode.light
-                            ? Colors.black
-                            : Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        )
+                      ],
                     ),
-                    TextSpan(
-                      text: 'Rashumi meri hai Lawde, Aur mera chota hai',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.themeMode == ThemeMode.light
-                            ? Colors.black
-                            : Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  );
+                }),
+            // const SizedBox(height: 10),
+            // Container(
+            //   width: MediaQuery.of(context).size.width,
+            //   padding: const EdgeInsets.symmetric(horizontal: 10),
+            //   child: RichText(
+            //     text: TextSpan(
+            //       children: [
+            //         TextSpan(
+            //           text: 'Vikas ',
+            //           style: TextStyle(
+            //             fontSize: 12,
+            //             color: theme.themeMode == ThemeMode.light
+            //                 ? Colors.black
+            //                 : Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //         TextSpan(
+            //           text: 'Rashumi meri hai Lawde, Aur mera chota hai',
+            //           style: TextStyle(
+            //             fontSize: 12,
+            //             color: theme.themeMode == ThemeMode.light
+            //                 ? Colors.black
+            //                 : Colors.white,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 10),
             InkWell(
               onTap: () {

@@ -28,9 +28,12 @@ class AuthMethod {
     required String email,
     required String password,
     required String name,
-    required String batch,
     required String department,
     required Uint8List image,
+    required String gender,
+    required String faculty,
+    required String startYear,
+    required String endYear,
   }) async {
     String res = "Some Error Occured";
     try {
@@ -39,7 +42,10 @@ class AuthMethod {
           name.isEmpty ||
           department.isEmpty ||
           image.isEmpty ||
-          batch.isEmpty) {
+          gender.isEmpty ||
+          faculty.isEmpty ||
+          startYear.isEmpty ||
+          endYear.isEmpty) {
         res = "Please fill all the fields";
       } else {
         UserCredential userCredential =
@@ -65,16 +71,20 @@ class AuthMethod {
           user.updatePhotoURL(imageLink);
 
           UserModel users = UserModel(
-            username: name,
+            name: name,
+            username: "",
             uid: user.uid,
             email: email,
-            batch: batch,
+            batch: "$startYear-$endYear",
             photoUrl: imageLink,
             bio: '',
             followers: [],
             following: [],
             isVerified: false,
             isBanned: false,
+            faculty: faculty,
+            department: department,
+            gender: gender,
           );
 
           await _firestore

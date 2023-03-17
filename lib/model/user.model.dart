@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
+  final String name;
   final String email;
   final String uid;
   final String photoUrl;
@@ -11,9 +12,13 @@ class UserModel {
   final List following;
   final bool isVerified;
   final bool isBanned;
+  final String faculty;
+  final String gender;
+  final String department;
 
   const UserModel({
-    required this.username,
+    required this.name,
+    this.username = '',
     required this.uid,
     required this.photoUrl,
     required this.email,
@@ -23,12 +28,16 @@ class UserModel {
     required this.following,
     this.isVerified = false,
     this.isBanned = false,
+    required this.faculty,
+    required this.department,
+    required this.gender,
   });
 
   static UserModel fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return UserModel(
+      name: snapshot["name"],
       username: snapshot["username"],
       uid: snapshot["uid"],
       email: snapshot["email"],
@@ -39,10 +48,14 @@ class UserModel {
       following: snapshot["following"],
       isVerified: snapshot["isVerified"],
       isBanned: snapshot["isBanned"],
+      faculty: snapshot["faculty"],
+      department: snapshot["department"],
+      gender: snapshot["gender"],
     );
   }
 
   Map<String, dynamic> toJson() => {
+        "name": name,
         "username": username,
         "uid": uid,
         "email": email,
@@ -53,5 +66,8 @@ class UserModel {
         "following": following,
         "isVerified": isVerified,
         "isBanned": isBanned,
+        "faculty": faculty,
+        "department": department,
+        "gender": gender,
       };
 }

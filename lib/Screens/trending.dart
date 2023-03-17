@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:juconfession/Screens/most.popular.dart';
-import 'package:juconfession/Screens/popular.girls.dart';
-
-import 'popular.boys.dart';
 
 class TrendingPage extends StatelessWidget {
   const TrendingPage({super.key});
@@ -37,14 +33,58 @@ class TrendingPage extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  MostPopular(),
-                  PopularGirls(),
-                  PopularBoys(),
+                  FeatureNot(),
+                  FeatureNot(),
+                  FeatureNot(),
+                  // MostPopular(),
+                  // PopularGirls(),
+                  // PopularBoys(),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class FeatureNot extends StatelessWidget {
+  const FeatureNot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          //once we reach 100 User This feature will be available
+          // Text(
+          //   'Feature Not Available',
+          //   style: TextStyle(
+          //     fontSize: 17,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'Once we reach 100 Users',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            'This feature will be Automatically available',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

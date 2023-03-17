@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/utils.dart';
 
@@ -21,29 +20,94 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController departmentController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   bool isLogin = false;
   bool isImageUploaded = false;
   File? _image;
-  String? selectedBatch;
-  List<String> batch = [
-    '2015-2019',
-    '2016-2020',
-    '2017-2021',
-    '2018-2022',
-    '2019-2023',
-    '2020-2024',
-    '2021-2025',
-    '2022-2026',
+
+  List gender = ['Male', 'Female', 'Other'];
+  String? selectedGender;
+  String? selectedFaculty;
+  String? selectedDepartment;
+  String? selectedStartYear;
+  String? selectedEndYear;
+
+  List faculty = ['Engineering', 'Science', 'Arts', 'Other'];
+  List year = [
+    '2015',
+    '2016',
+    '2017',
+    '2018',
+    '2019',
+    '2020',
+    '2021',
+    '2022',
+    '2023',
+    '2024',
+    '2025',
+    '2026',
+    '2027',
   ];
+  List engineeringDepartment = [
+    'CSE',
+    'IT',
+    'ETCE',
+    'IEE'
+        'EE',
+    'ME',
+    'Civil',
+    'MME',
+    'FTBE',
+    'Printing',
+    'Chemical',
+    'Construction',
+    'Power',
+    'Production',
+    'Other Engineering'
+  ];
+
+  List scienceDepartment = [
+    'Physics',
+    'Chemistry',
+    'Mathematics',
+    'Statistics',
+    'Botany',
+    'Zoology',
+    'Microbiology',
+    'Biochemistry',
+    'Biotechnology',
+    'Other Science'
+  ];
+
+  List artsDepartment = [
+    'Bangla',
+    'English',
+    'History',
+    'Economics',
+    'Political Science',
+    'Sociology',
+    'Philosophy',
+    'Islamic Studies',
+    'Other Arts'
+  ];
+
+  Map<String, dynamic> submitConfession = {
+    'id': '0',
+    'confession': "",
+    'image': "",
+    'gender': "",
+    'faculty': "",
+    'department': "",
+    'year': "",
+  };
+
+  List otherDepartment = ['Law', 'Medicine', 'Pharmacy', 'Nursing', 'Other'];
 
   @override
   void dispose() {
     nameController.dispose();
-    departmentController.dispose();
     emailController.dispose();
     passwordController.dispose();
     usernameController.dispose();
@@ -76,10 +140,10 @@ class _SignUpState extends State<SignUp> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 //svg image
-                SvgPicture.asset(
-                  'assets/signup.svg',
-                  height: 250,
-                ),
+                // SvgPicture.asset(
+                //   'assets/signup.svg',
+                //   height: 250,
+                // ),
                 const SizedBox(height: 10),
                 const Text(
                   'Sign Up',
@@ -95,7 +159,7 @@ class _SignUpState extends State<SignUp> {
                             radius: 50,
                             backgroundImage:
                                 MemoryImage(_image!.readAsBytesSync()),
-                            backgroundColor: Colors.red,
+                            backgroundColor: Colors.transparent,
                           )
                         : ClipRRect(
                             borderRadius: BorderRadius.circular(50),
@@ -104,6 +168,9 @@ class _SignUpState extends State<SignUp> {
                               height: 100,
                               width: 100,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                     Positioned(
@@ -120,11 +187,11 @@ class _SignUpState extends State<SignUp> {
                   key: _formKey,
                   child: Column(children: [
                     TextEnterArea(
-                        hintText: 'Name',
+                        hintText: 'Enter Your Name',
                         controller: nameController,
                         prefixIcon: const Icon(
                           Icons.person,
-                          color: Colors.black54,
+                          color: Colors.black,
                         ),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
@@ -134,63 +201,192 @@ class _SignUpState extends State<SignUp> {
                           }
                           return null;
                         }),
-                    TextEnterArea(
-                        hintText: 'Department',
-                        controller: departmentController,
-                        prefixIcon: const Icon(
-                          Icons.person_search,
-                          color: Colors.black54,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          value: selectedGender,
+                          icon: const Icon(Icons.arrow_drop_down_circle,
+                              color: Colors.black),
+                          hint: const Text("Select Your gender",
+                              style: TextStyle(color: Colors.black)),
+                          items: gender
+                              .map((e) =>
+                                  DropdownMenuItem(value: e, child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedGender = value.toString();
+                            });
+                          }),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              selectedDepartment = null;
+                            });
+                          },
+                          value: selectedFaculty,
+                          icon: const Icon(Icons.arrow_drop_down_circle,
+                              color: Colors.black),
+                          hint: const Text("Select Faculty",
+                              style: TextStyle(color: Colors.black)),
+                          items: faculty
+                              .map((e) =>
+                                  DropdownMenuItem(value: e, child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedFaculty = value.toString();
+                            });
+                          }),
+                    ),
+                    if (selectedFaculty != null) const SizedBox(height: 5),
+                    if (selectedFaculty != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
                         ),
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        validator: (p0) {
-                          if (p0!.isEmpty) {
-                            return 'Please enter your department';
-                          }
-                          return null;
-                        }),
+                        child: DropdownButtonFormField(
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                            value: selectedDepartment,
+                            icon: const Icon(Icons.arrow_drop_down_circle,
+                                color: Colors.black),
+                            hint: const Text("Select Department",
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0))),
+                            items: selectedFaculty == faculty[0]
+                                ? engineeringDepartment
+                                    .map((e) => DropdownMenuItem(
+                                        value: e, child: Text(e)))
+                                    .toList()
+                                : selectedFaculty == faculty[1]
+                                    ? scienceDepartment
+                                        .map((e) => DropdownMenuItem(
+                                            value: e, child: Text(e)))
+                                        .toList()
+                                    : selectedFaculty == faculty[2]
+                                        ? artsDepartment
+                                            .map((e) => DropdownMenuItem(
+                                                value: e, child: Text(e)))
+                                            .toList()
+                                        : otherDepartment
+                                            .map((e) => DropdownMenuItem(
+                                                value: e, child: Text(e)))
+                                            .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDepartment = value.toString();
+                              });
+                            }),
+                      ),
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          value: selectedStartYear,
+                          icon: const Icon(Icons.arrow_drop_down_circle,
+                              color: Colors.black),
+                          hint: const Text(
+                            "Select Starting Year",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          items: year
+                              .map((e) =>
+                                  DropdownMenuItem(value: e, child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedStartYear = value.toString();
+                            });
+                          }),
+                    ),
+                    const SizedBox(height: 5),
+
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: DropdownButtonFormField(
-                          value: selectedBatch,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          hint: const Text("Your Batch"),
-                          items: batch
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          value: selectedEndYear,
+                          icon: const Icon(Icons.arrow_drop_down_circle,
+                              color: Colors.black),
+                          hint: const Text(
+                            "Select Ending Year",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          items: year
                               .map((e) =>
                                   DropdownMenuItem(value: e, child: Text(e)))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              selectedBatch = value.toString();
+                              selectedEndYear = value.toString();
                             });
                           }),
                     ),
 
                     TextEnterArea(
-                        hintText: 'Email',
+                        hintText: 'Enter Your Email',
                         controller: emailController,
                         prefixIcon: const Icon(
                           Icons.email,
-                          color: Colors.black54,
+                          color: Colors.black,
                         ),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         validator: (p0) {
+                          //end line should contain @gmail.com
+
                           if (p0!.isEmpty) {
                             return 'Please enter your email';
+                          } else if (!p0.contains('@gmail.com')) {
+                            return 'Please enter a valid gmail account';
                           }
                           return null;
                         }),
 // password text field
                     TextEnterArea(
-                        hintText: 'Password',
+                        hintText: 'Enter Your Password',
                         controller: passwordController,
                         prefixIcon: const Icon(
                           Icons.lock,
-                          color: Colors.black54,
+                          color: Colors.black,
                         ),
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: false,
@@ -217,12 +413,16 @@ class _SignUpState extends State<SignUp> {
                         isLogin = true;
                       });
                       String result = await AuthMethod().signUpUser(
-                          email: emailController.text,
-                          password: passwordController.text,
-                          name: nameController.text,
-                          batch: selectedBatch!,
-                          image: File(_image!.path).readAsBytesSync(),
-                          department: departmentController.text);
+                        email: emailController.text,
+                        password: passwordController.text,
+                        name: nameController.text,
+                        image: File(_image!.path).readAsBytesSync(),
+                        gender: selectedGender!,
+                        department: selectedDepartment!,
+                        faculty: selectedFaculty!,
+                        startYear: selectedStartYear!,
+                        endYear: selectedEndYear!,
+                      );
 
                       setState(() {
                         isLogin = false;
@@ -235,7 +435,7 @@ class _SignUpState extends State<SignUp> {
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Something went wrong'),
+                          content: Text('Please Fill All The Fields'),
                         ),
                       );
                     }
