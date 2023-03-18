@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
    <application
-        android:label="juconfession"
+        android:label="JU Confession"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
