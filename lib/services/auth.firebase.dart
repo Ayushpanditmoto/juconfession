@@ -54,19 +54,18 @@ class AuthMethod {
           password: password,
         );
 
+        //sent verification email
+        // User? user = userCredential.user;
+        // if (user != null && !user.emailVerified) {
+        //   await user.sendEmailVerification();
+
         //cloudinary
         String? imageLink =
             await Cloud.uploadImageToStorage(image, 'ProfileImages', email);
 
-        //fire base storage
-        // String imageUrl = await _storageMethods.uploadImageToStorage(
-        //   'ProfileImages',
-        //   image,
-        //   false,
-        // );
-
         User? user = userCredential.user;
-        if (user != null) {
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
           user.updateDisplayName(name);
           user.updatePhotoURL(imageLink);
 
@@ -80,7 +79,7 @@ class AuthMethod {
             bio: '',
             followers: [],
             following: [],
-            isVerified: false,
+            isVerified: user.emailVerified ? true : false,
             isBanned: false,
             faculty: faculty,
             department: department,
@@ -92,7 +91,7 @@ class AuthMethod {
               .collection('users')
               .doc(user.uid)
               .set(users.toJson());
-          res = "Signed Up Successfully";
+          res = "Verification Email Sent";
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -125,7 +124,12 @@ class AuthMethod {
         );
 
         User? user = userCredential.user;
-        if (user != null) {
+        if (user != null && user.emailVerified) {
+          await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .update({'isVerified': true});
+
           res = "Logged In Successfully";
         }
       }

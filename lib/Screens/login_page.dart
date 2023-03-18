@@ -130,29 +130,69 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutePath.forgot);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                  child: const Text('Forgot Password'),
+
+                // forgot password text button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RoutePath.forgot);
+                      },
+                      child: const Text(
+                        'Reset',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.amber,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                // sign up button
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutePath.signup);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                  child: const Text('Sign Up'),
-                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Don\'t have an account?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RoutePath.signup);
+                      },
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.amber,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, RoutePath.signup);
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     foregroundColor: Colors.black,
+                //     backgroundColor: Colors.white,
+                //   ),
+                //   child: const Text('Sign Up'),
+                // ),
               ],
             ),
           ),
