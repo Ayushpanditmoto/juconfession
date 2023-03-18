@@ -71,7 +71,7 @@ class _AllUsersState extends State<AllUsers> {
                     itemCount: snapshot.data!.docs.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, childAspectRatio: 0.8),
+                            crossAxisCount: 2, childAspectRatio: 0.7),
                     itemBuilder: (context, index) {
                       return UserComponent(
                         name: snapshot.data!.docs[index].data()['name'],

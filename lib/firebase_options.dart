@@ -17,15 +17,24 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,41 +52,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB4Ak_HK6AmXAv_qsqidqhXxnRDdo5iX4k',
-    appId: '1:350783778730:web:55b1a029950d4ece92c5d3',
-    messagingSenderId: '350783778730',
-    projectId: 'juconfess-dae75',
-    authDomain: 'juconfess-dae75.firebaseapp.com',
-    storageBucket: 'juconfess-dae75.appspot.com',
-    measurementId: 'G-XNSRSR6JC9',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAYyk-8tDe_jC6W2gFdsoQ1nrJ1YdDLYGE',
-    appId: '1:350783778730:android:122e1fefb4efdf2092c5d3',
+    appId: '1:350783778730:android:36e233a77eb6ab4a92c5d3',
     messagingSenderId: '350783778730',
     projectId: 'juconfess-dae75',
+    databaseURL: 'https://juconfess-dae75-default-rtdb.firebaseio.com',
     storageBucket: 'juconfess-dae75.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA-6UpBnV9tXWGyCNYAJw5y0QzALZ7KeFI',
-    appId: '1:350783778730:ios:403fac3bf62d588092c5d3',
-    messagingSenderId: '350783778730',
-    projectId: 'juconfess-dae75',
-    storageBucket: 'juconfess-dae75.appspot.com',
-    iosClientId: '350783778730-vnaqtukv625me11b8kdcb235mufb1ru7.apps.googleusercontent.com',
-    iosBundleId: 'com.example.juconfession',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyA-6UpBnV9tXWGyCNYAJw5y0QzALZ7KeFI',
-    appId: '1:350783778730:ios:403fac3bf62d588092c5d3',
-    messagingSenderId: '350783778730',
-    projectId: 'juconfess-dae75',
-    storageBucket: 'juconfess-dae75.appspot.com',
-    iosClientId: '350783778730-vnaqtukv625me11b8kdcb235mufb1ru7.apps.googleusercontent.com',
-    iosBundleId: 'com.example.juconfession',
   );
 }

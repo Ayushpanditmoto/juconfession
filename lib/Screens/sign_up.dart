@@ -54,8 +54,8 @@ class _SignUpState extends State<SignUp> {
     'CSE',
     'IT',
     'ETCE',
-    'IEE'
-        'EE',
+    'IEE',
+    'EE',
     'ME',
     'Civil',
     'MME',

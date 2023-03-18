@@ -33,8 +33,8 @@ class _AddConfessionState extends State<AddConfession> {
     'CSE',
     'IT',
     'ETCE',
-    'IEE'
-        'EE',
+    'IEE',
+    'EE',
     'ME',
     'Civil',
     'MME',

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class UserComponent extends StatelessWidget {
   final String name;
@@ -39,7 +40,7 @@ class UserComponent extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: imageUrl,
                       fit: BoxFit.cover,
-                      height: 160,
+                      height: MediaQuery.of(context).size.height * 0.22,
                       width: double.infinity,
                     ),
                   ),
@@ -60,15 +61,38 @@ class UserComponent extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(
-                name,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      name,
+                      maxLines: 2,
+                    ),
+                    AutoSizeText(
+                      branch,
+                      maxLines: 2,
+                    ),
+                    AutoSizeText(
+                      year,
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                branch,
-              ),
-              Text(
-                year,
-              ),
+
+              //   AutoSizeText(
+              //     name,
+              //     maxLines: 2,
+              //   ),
+              //   AutoSizeText(
+              //     branch,
+              //     maxLines: 2,
+              //   ),
+              //   AutoSizeText(
+              //     year,
+              //     maxLines: 2,
+              //   ),
             ],
           ),
         ),
