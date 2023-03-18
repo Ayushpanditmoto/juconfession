@@ -57,6 +57,7 @@ dependencies:
   share_plus: ^6.3.1
   shared_preferences: ^2.0.18
   shimmer: ^2.0.0
+  upgrader: ^6.2.0
   uuid: ^3.0.7
 
 dev_dependencies:

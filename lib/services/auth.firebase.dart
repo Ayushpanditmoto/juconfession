@@ -124,7 +124,7 @@ class AuthMethod {
         );
 
         User? user = userCredential.user;
-        if (user != null && user.emailVerified) {
+        if (user != null) {
           await _firestore
               .collection('users')
               .doc(user.uid)

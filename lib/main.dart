@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/home.dart';
 import 'package:juconfession/provider/user.provider.dart';
+import 'package:upgrader/upgrader.dart';
 import 'Screens/login_page.dart';
 import 'Screens/nointernet.dart';
 import 'firebase_options.dart';
@@ -39,32 +40,44 @@ class _MyAppState extends State<MyApp> {
       ],
       child: Builder(builder: (context) {
         final themeProvider = Provider.of<ThemeProvider>(context);
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'JU Confessions',
-          theme: CustomTheme.lightTheme(),
-          darkTheme: CustomTheme.darkTheme(),
-          themeMode: themeProvider.themeMode,
-          // initialRoute: RoutePath.login, this is enemy
-          onGenerateRoute: RoutePath.generateRoute,
-          home: StreamBuilder(
-              stream: connectivity.onConnectivityChanged,
-              builder: (context, snapshot) {
-                if (snapshot.data == ConnectivityResult.none) {
-                  return const NoInternet();
-                }
+        return UpgradeAlert(
+          upgrader: Upgrader(
+            showReleaseNotes: true,
+            shouldPopScope: () => true,
+            // canDismissDialog: true,
+            // debugLogging: true,
+            durationUntilAlertAgain: const Duration(
+              minutes: 60,
+            ),
+            dialogStyle: UpgradeDialogStyle.material,
+          ),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'JU Confessions',
+            theme: CustomTheme.lightTheme(),
+            darkTheme: CustomTheme.darkTheme(),
+            themeMode: themeProvider.themeMode,
+            // initialRoute: RoutePath.login, this is enemy
+            onGenerateRoute: RoutePath.generateRoute,
+            home: StreamBuilder(
+                stream: connectivity.onConnectivityChanged,
+                builder: (context, snapshot) {
+                  if (snapshot.data == ConnectivityResult.none) {
+                    return const NoInternet();
+                  }
 
-                return StreamBuilder(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return const Confession();
-                    } else {
-                      return const Login();
-                    }
-                  },
-                );
-              }),
+                  return StreamBuilder(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return const Confession();
+                      } else {
+                        return const Login();
+                      }
+                    },
+                  );
+                }),
+          ),
         );
       }),
     );
