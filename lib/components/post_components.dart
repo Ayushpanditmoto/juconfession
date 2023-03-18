@@ -13,6 +13,7 @@ import '../provider/theme_provider.dart';
 import 'package:intl/intl.dart';
 
 import '../services/firestore.methods.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Post extends StatelessWidget {
   final Map<String, dynamic> snaps;
@@ -436,7 +437,11 @@ class Post extends StatelessWidget {
                 const SizedBox(width: 5),
                 const Spacer(),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Share.share(
+                        'Hey, check out this confession on JU confession App: ${snaps['confession']}',
+                        subject: 'Confession');
+                  },
                   icon: const Icon(
                     Icons.share,
                     color: Colors.grey,
@@ -444,12 +449,12 @@ class Post extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 5),
-                const Text(
-                  '1.2k',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
+                // const Text(
+                //   '1.2k',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(

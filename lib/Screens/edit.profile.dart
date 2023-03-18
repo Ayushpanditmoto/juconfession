@@ -18,6 +18,7 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   File? _image;
+  bool isUpdating = false;
   TextEditingController bioController = TextEditingController();
 
   @override
@@ -65,18 +66,31 @@ class _EditProfileState extends State<EditProfile> {
                         backgroundImage: MemoryImage(_image!.readAsBytesSync()),
                         backgroundColor: Colors.transparent,
                       )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: CachedNetworkImage(
-                          imageUrl: 'https://i.stack.imgur.com/l60Hf.png',
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      ),
+                    : StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: CachedNetworkImage(
+                              imageUrl: snapshot.data!['photoUrl'],
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        }),
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -110,25 +124,44 @@ class _EditProfileState extends State<EditProfile> {
             // Update Button
             ElevatedButton(
               onPressed: () async {
-                if (bioController.text.isEmpty || _image == null) {
+                if (bioController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Please fill all the fields'),
+                      content: Text('Please enter a bio'),
                     ),
                   );
                   return;
                 }
 
-                String? imageUrl = await Cloud.uploadImageToStorage(
-                    File(_image!.path).readAsBytesSync(),
-                    "ProfileImages",
-                    widget.uid);
-                FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(widget.uid)
-                    .update({
-                  'bio': bioController.text,
-                  'photoUrl': imageUrl,
+                String? imageUrl = _image != null
+                    ? await Cloud.uploadImageToStorage(
+                        File(_image!.path).readAsBytesSync(),
+                        "ProfileImages",
+                        widget.uid)
+                    : null;
+
+                if (imageUrl == null) {
+                  setState(() {
+                    isUpdating = true;
+                  });
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(widget.uid)
+                      .update({
+                    'bio': bioController.text,
+                  });
+                } else {
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(widget.uid)
+                      .update({
+                    'bio': bioController.text,
+                    'photoUrl': imageUrl,
+                  });
+                }
+
+                setState(() {
+                  isUpdating = false;
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -144,7 +177,11 @@ class _EditProfileState extends State<EditProfile> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Update'),
+              child: isUpdating
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Text('Update'),
             ),
           ],
         ),
