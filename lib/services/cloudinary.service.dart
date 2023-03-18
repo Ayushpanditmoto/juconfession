@@ -16,7 +16,7 @@ class Cloud {
   );
 
   static Future<String> uploadImageToStorage(
-      Uint8List image, String folder) async {
+      Uint8List image, String folder, String uid) async {
     try {
       var compressedImage = await FlutterImageCompress.compressWithList(
         image,
@@ -26,7 +26,7 @@ class Cloud {
       );
       var res = await cloudinary.upload(
         fileBytes: compressedImage,
-        folder: folder,
+        folder: "$folder/$uid",
         resourceType: CloudinaryResourceType.image,
         progressCallback: (count, total) {
           debugPrint('Progress: $count/$total');

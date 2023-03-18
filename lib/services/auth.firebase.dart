@@ -56,7 +56,7 @@ class AuthMethod {
 
         //cloudinary
         String? imageLink =
-            await Cloud.uploadImageToStorage(image, 'ProfileImages');
+            await Cloud.uploadImageToStorage(image, 'ProfileImages', email);
 
         //fire base storage
         // String imageUrl = await _storageMethods.uploadImageToStorage(
@@ -85,6 +85,7 @@ class AuthMethod {
             faculty: faculty,
             department: department,
             gender: gender,
+            collectionPhotos: [],
           );
 
           await _firestore

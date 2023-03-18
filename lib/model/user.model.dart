@@ -15,6 +15,7 @@ class UserModel {
   final String faculty;
   final String gender;
   final String department;
+  final List<String> collectionPhotos;
 
   const UserModel({
     required this.name,
@@ -31,6 +32,7 @@ class UserModel {
     required this.faculty,
     required this.department,
     required this.gender,
+    required this.collectionPhotos,
   });
 
   static UserModel fromSnap(DocumentSnapshot snap) {
@@ -51,6 +53,7 @@ class UserModel {
       faculty: snapshot["faculty"],
       department: snapshot["department"],
       gender: snapshot["gender"],
+      collectionPhotos: snapshot["collectionPhotos"],
     );
   }
 
@@ -69,5 +72,6 @@ class UserModel {
         "faculty": faculty,
         "department": department,
         "gender": gender,
+        "collectionPhotos": collectionPhotos,
       };
 }

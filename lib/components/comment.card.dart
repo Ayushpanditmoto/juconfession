@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -49,22 +50,33 @@ class _CommentCardState extends State<CommentCard> {
                       ),
                     );
                   },
-                  child: CachedNetworkImage(
-                    imageUrl: widget.snaps['profilePic'],
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 36.0,
-                      height: 36.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
-                      ),
-                    ),
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  ),
+                  child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(widget.snaps['uid'])
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        return CachedNetworkImage(
+                          imageUrl: snapshot.data!['photoUrl'],
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: 36.0,
+                            height: 36.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover),
+                            ),
+                          ),
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        );
+                      }),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

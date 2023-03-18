@@ -22,7 +22,8 @@ class FirestoreMethods {
 
     try {
       debugPrint('Uploading confession to firestore');
-      String photoUrl = await Cloud.uploadImageToStorage(image, 'confessions');
+      String photoUrl =
+          await Cloud.uploadImageToStorage(image, 'confessions', uid);
 
       String postId = const Uuid().v4();
 

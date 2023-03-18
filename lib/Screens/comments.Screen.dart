@@ -137,33 +137,57 @@ class _CommentsState extends State<Comments> {
           padding: const EdgeInsets.only(left: 16, right: 8),
           child: Row(
             children: [
-              CachedNetworkImage(
-                imageUrl: user!.photoURL!,
-                imageBuilder: (context, imageProvider) => Container(
-                  width: 36.0,
-                  height: 36.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                placeholder: (context, url) => ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(40)),
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user!.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(40)),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    }
+                    return CachedNetworkImage(
+                      imageUrl: snapshot.data!['photoUrl'],
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: 36.0,
+                        height: 36.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) => ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(40)),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    );
+                  }),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 8),
