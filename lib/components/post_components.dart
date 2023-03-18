@@ -41,9 +41,9 @@ class Post extends StatelessWidget {
             Row(
               children: [
                 CachedNetworkImage(
-                  imageUrl: snaps['photoUrl'] != ''
-                      ? snaps['photoUrl']
-                      : 'https://res.cloudinary.com/dlsybyzom/image/upload/v1678386168/ProfileImages/mr6hpqbiwhjbsaklno0h.jpg',
+                  imageUrl: snaps['gender'] == 'Male'
+                      ? 'https://i1.sndcdn.com/artworks-ywcx1pUzUGGvjwmH-BUNWRA-t500x500.jpg'
+                      : 'https://i.kym-cdn.com/photos/images/newsfeed/002/386/213/ce9.jpg',
                   width: 40,
                   height: 40,
                   fit: BoxFit.cover,
