@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:juconfession/services/auth.firebase.dart';
+import 'package:juconfession/utils/route.dart';
 import 'package:juconfession/utils/utils.dart';
 
 import '../components/custom_text_field.dart';
@@ -429,6 +430,10 @@ class _SignUpState extends State<SignUp> {
                       });
 
                       showSnackBar(result, context);
+                      if (result == 'Signed Up Successfully') {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, RoutePath.confess, (route) => false);
+                      }
                     } catch (e) {
                       setState(() {
                         isLogin = false;

@@ -65,7 +65,7 @@ class AuthMethod {
 
         User? user = userCredential.user;
         if (user != null && !user.emailVerified) {
-          await user.sendEmailVerification();
+          // await user.sendEmailVerification();
           user.updateDisplayName(name);
           user.updatePhotoURL(imageLink);
 
@@ -91,7 +91,7 @@ class AuthMethod {
               .collection('users')
               .doc(user.uid)
               .set(users.toJson());
-          res = "Verification Email Sent";
+          res = "Signed Up Successfully";
         }
       }
     } on FirebaseAuthException catch (e) {

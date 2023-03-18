@@ -409,8 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                  if (snapshot.data!['bio'] == '' ||
-                      snapshot.data!['bio'] == null)
+                  if (snapshot.data!['bio'] == "" && user!.uid == widget.uid)
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
