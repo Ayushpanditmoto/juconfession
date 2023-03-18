@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:juconfession/components/custom_text_field.dart';
@@ -11,6 +14,41 @@ class Forgot extends StatefulWidget {
 
 class _ForgotState extends State<Forgot> {
   TextEditingController controller = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  void forgotPassword() async {
+    try {
+      if (_formKey.currentState!.validate() == false) return;
+
+      setState(() {
+        isLoading = true;
+      });
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: controller.text);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password reset link sent to your email'),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No user found for that email'),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,17 +82,28 @@ class _ForgotState extends State<Forgot> {
                     ),
                   ],
                 ),
-                child: TextEnterArea(
-                    prefixIcon: const Icon(
-                      Icons.email,
-                      color: Colors.black54,
-                    ),
-                    controller: controller,
-                    hintText: 'Email'),
+                child: Form(
+                  key: _formKey,
+                  child: TextEnterArea(
+                      prefixIcon: const Icon(
+                        Icons.email,
+                        color: Colors.black54,
+                      ),
+                      controller: controller,
+                      hintText: 'Email',
+                      validator: (p0) {
+                        if (p0!.isEmpty) {
+                          return 'Please enter your email';
+                        } else if (!p0.contains('@gmail.com')) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      }),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: forgotPassword,
                 style: ElevatedButton.styleFrom(
                   foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                   backgroundColor: const Color.fromARGB(255, 186, 186, 186),
@@ -62,7 +111,22 @@ class _ForgotState extends State<Forgot> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text('Send Password Reset Link'),
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Send Password Reset Link',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ],
           ),
