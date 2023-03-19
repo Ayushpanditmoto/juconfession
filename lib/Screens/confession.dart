@@ -63,6 +63,30 @@ class _ConfessionPageState extends State<ConfessionPage> {
                 ? const Icon(Icons.dark_mode)
                 : const Icon(Icons.light_mode),
           ),
+          //notification
+          IconButton(
+            onPressed: () {
+              //development stage dialog
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Notification'),
+                    content: const Text('This feature is under development'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Ok'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.notifications),
+          ),
         ],
       ),
       drawer: Drawer(
