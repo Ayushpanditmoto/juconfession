@@ -15,6 +15,32 @@ class ConfessionPage extends StatefulWidget {
 }
 
 class _ConfessionPageState extends State<ConfessionPage> {
+  bool isAdminCheck = false;
+  @override
+  void initState() {
+    super.initState();
+    isAdmin();
+  }
+
+  void isAdmin() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isAdmin is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        isAdminCheck = false;
+        return;
+      }
+      isAdminCheck = (documentSnapshot.data() as dynamic)['isAdmin'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -104,31 +130,20 @@ class _ConfessionPageState extends State<ConfessionPage> {
                 );
               }
 
-              return FutureBuilder(
-                  future: AuthMethod().isAdmin(),
-                  builder: (context, isAdminCheck) {
-                    if (isAdminCheck.connectionState ==
-                        ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Post(
-                            isAdminCheck: isAdminCheck.data!,
-                            snaps: snapshot.data!.docs[index].data(),
-                            index: snapshot.data!.docs.length - index - 1,
-                          ),
-                        );
-                      },
-                    );
-                  });
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Post(
+                      isAdminCheck: isAdminCheck,
+                      snaps: snapshot.data!.docs[index].data(),
+                      index: snapshot.data!.docs.length - index - 1,
+                    ),
+                  );
+                },
+              );
             }),
       ),
     );
