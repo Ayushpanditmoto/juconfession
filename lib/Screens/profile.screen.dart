@@ -274,31 +274,121 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       InkWell(
                         onTap: () {
                           showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return StreamBuilder(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(widget.uid)
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                      //show followers list
-                                      return ListView.builder(
-                                          itemCount: snapshot
-                                              .data!['following'].length,
-                                          itemBuilder: (context, index) {
-                                            return const ListTile(
-                                              title: Text("Hello"),
-                                            );
-                                          });
-                                    });
-                              });
+                            context: context,
+                            builder: (context) => SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.8,
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    'Following',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      // fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount:
+                                          snapshot.data!['following'].length,
+                                      itemBuilder: (context, index) {
+                                        return FutureBuilder(
+                                            future: FirebaseFirestore.instance
+                                                .collection('users')
+                                                .doc(snapshot.data!['following']
+                                                    [index])
+                                                .get(),
+                                            builder: (context, snapshot1) {
+                                              //print snapshot1.data;
+
+                                              if (snapshot1.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                //shimmer effect
+                                                return ListTile(
+                                                  leading: Shimmer.fromColors(
+                                                    baseColor: Colors.grey,
+                                                    highlightColor:
+                                                        Colors.white,
+                                                    child: const CircleAvatar(
+                                                      radius: 25,
+                                                    ),
+                                                  ),
+                                                  title: Shimmer.fromColors(
+                                                    baseColor: Colors.grey,
+                                                    highlightColor:
+                                                        Colors.white,
+                                                    child: const Text(
+                                                      'Loading...',
+                                                      style: TextStyle(
+                                                          fontSize: 15),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+
+                                              return InkWell(
+                                                onTap: () {
+                                                  //navigate to user profile
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileScreen(
+                                                        uid: snapshot1.data!
+                                                            .data()!['uid'],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: ListTile(
+                                                  leading: CachedNetworkImage(
+                                                    width: 50,
+                                                    height: 50,
+                                                    imageUrl: snapshot1.data!
+                                                        .data()!['photoUrl'],
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        Container(
+                                                      width: 50,
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            const Icon(
+                                                      Icons.error,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                  title: Text(snapshot1.data!
+                                                      .data()!['name']),
+                                                ),
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
