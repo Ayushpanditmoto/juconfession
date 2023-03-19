@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/home.dart';
 import 'package:juconfession/provider/user.provider.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:upgrader/upgrader.dart';
 import 'Screens/login_page.dart';
 import 'Screens/nointernet.dart';
@@ -65,12 +67,66 @@ class _MyAppState extends State<MyApp> {
                   if (snapshot.data == ConnectivityResult.none) {
                     return const NoInternet();
                   }
-
                   return StreamBuilder(
                     stream: FirebaseAuth.instance.authStateChanges(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return const Confession();
+                        //chec whether user is banned or not
+                        return StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final DocumentSnapshot documentSnapshot =
+                                    snapshot.data as DocumentSnapshot;
+                                if (documentSnapshot.data() == null) {
+                                  return const Login();
+                                }
+                                if ((documentSnapshot.data()
+                                        as dynamic)['isBanned'] ==
+                                    true) {
+                                  return Scaffold(
+                                    body: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        //image
+                                        const Center(
+                                          child: Text(
+                                            'You are banned',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          'assets/ban.png',
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            AuthMethod().logout();
+                                          },
+                                          child: const Text('Logout'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return const Confession();
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            });
                       } else {
                         return const Login();
                       }

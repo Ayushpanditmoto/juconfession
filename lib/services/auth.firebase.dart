@@ -177,4 +177,46 @@ class AuthMethod {
       rethrow;
     }
   }
+
+  //ban a user
+  Future<void> banUser(String uid) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'isBanned': true});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //unban a user
+  Future<void> unbanUser(String uid) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'isBanned': false});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //check if user is banned or not
+  Future<bool> isBanned() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isBanned is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return false;
+      }
+      return (documentSnapshot.data() as dynamic)['isBanned'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
