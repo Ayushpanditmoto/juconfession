@@ -178,6 +178,42 @@ class AuthMethod {
     }
   }
 
+  //isLove
+  Future<bool> isLove(String uid) async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isLove is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return false;
+      }
+      return (documentSnapshot.data() as dynamic)['isLove'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //adminNote
+  Future<String> adminNote() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if adminNote is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return '';
+      }
+      return (documentSnapshot.data() as dynamic)['adminNote'] ?? '';
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //ban a user
   Future<void> banUser(String uid) async {
     try {

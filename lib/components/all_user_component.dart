@@ -8,6 +8,8 @@ class UserComponent extends StatelessWidget {
   final String year;
   final String imageUrl;
   final bool isAdmin;
+  final bool isLove;
+  final String loveMessage;
   final VoidCallback tap;
 
   const UserComponent({
@@ -17,7 +19,9 @@ class UserComponent extends StatelessWidget {
     required this.year,
     required this.imageUrl,
     required this.isAdmin,
+    required this.isLove,
     required this.tap,
+    required this.loveMessage,
   });
 
   @override
@@ -48,8 +52,12 @@ class UserComponent extends StatelessWidget {
                     top: 0,
                     right: 0,
                     child: Icon(
-                      Icons.verified,
-                      color: isAdmin ? Colors.yellow : Colors.blue,
+                      isLove ? Icons.favorite : Icons.verified,
+                      color: isAdmin
+                          ? Colors.yellow
+                          : !isLove
+                              ? Colors.blue
+                              : Colors.red,
                       shadows: const [
                         Shadow(
                           color: Colors.black,
@@ -59,6 +67,30 @@ class UserComponent extends StatelessWidget {
                       ],
                     ),
                   ),
+                  isLove
+                      ? Positioned(
+                          bottom: 5,
+                          right: 5,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height: MediaQuery.of(context).size.height * 0.04,
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              loveMessage,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
               Expanded(

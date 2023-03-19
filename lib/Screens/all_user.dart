@@ -80,6 +80,11 @@ class _AllUsersState extends State<AllUsers> {
                         imageUrl: snapshot.data!.docs[index].data()['photoUrl'],
                         isAdmin: snapshot.data!.docs[index].data()['isAdmin'] ??
                             false,
+                        isLove: snapshot.data!.docs[index].data()['isLove'] ??
+                            false,
+                        loveMessage:
+                            snapshot.data!.docs[index].data()['loveMessage'] ??
+                                '',
                         tap: () {
                           Navigator.push(
                             context,
