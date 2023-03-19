@@ -660,39 +660,55 @@ class Post extends StatelessWidget {
                                                             ),
                                                           );
                                                         }
-                                                        return ListTile(
-                                                          leading:
-                                                              CachedNetworkImage(
-                                                            width: 50,
-                                                            height: 50,
-                                                            imageUrl:
-                                                                snapshot.data![
-                                                                    'photoUrl'],
-                                                            imageBuilder: (context,
-                                                                    imageProvider) =>
-                                                                CircleAvatar(
-                                                              backgroundImage:
-                                                                  imageProvider,
+                                                        return InkWell(
+                                                          onTap: () {
+                                                            //navigate to user profile
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        ProfileScreen(
+                                                                  uid: snapshot
+                                                                          .data![
+                                                                      'uid'],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: ListTile(
+                                                            leading:
+                                                                CachedNetworkImage(
+                                                              width: 50,
+                                                              height: 50,
+                                                              imageUrl: snapshot
+                                                                      .data![
+                                                                  'photoUrl'],
+                                                              imageBuilder: (context,
+                                                                      imageProvider) =>
+                                                                  CircleAvatar(
+                                                                backgroundImage:
+                                                                    imageProvider,
+                                                              ),
+                                                              placeholder: (context,
+                                                                      url) =>
+                                                                  const Center(
+                                                                child:
+                                                                    CircularProgressIndicator(),
+                                                              ),
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  const Icon(
+                                                                Icons.error,
+                                                                color: Colors
+                                                                    .redAccent,
+                                                              ),
                                                             ),
-                                                            placeholder:
-                                                                (context,
-                                                                        url) =>
-                                                                    const Center(
-                                                              child:
-                                                                  CircularProgressIndicator(),
+                                                            title: Text(
+                                                              snapshot.data![
+                                                                  'name'],
                                                             ),
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    const Icon(
-                                                              Icons.error,
-                                                              color: Colors
-                                                                  .redAccent,
-                                                            ),
-                                                          ),
-                                                          title: Text(
-                                                            snapshot
-                                                                .data!['name'],
                                                           ),
                                                         );
                                                       });
