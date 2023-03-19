@@ -29,8 +29,8 @@ class _ConfessionState extends State<Confession> {
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
+    _pageController.dispose();
   }
 
   void navigationTapped(int page) {

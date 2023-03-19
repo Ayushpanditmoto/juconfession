@@ -160,4 +160,21 @@ class AuthMethod {
         await _firestore.collection('users').doc(uid).get();
     return UserModel.fromSnap(documentSnapshot);
   }
+
+  Future<bool> isAdmin() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isAdmin is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return false;
+      }
+      return (documentSnapshot.data() as dynamic)['isAdmin'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

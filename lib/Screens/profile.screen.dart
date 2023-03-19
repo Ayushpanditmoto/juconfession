@@ -6,9 +6,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:juconfession/provider/theme_provider.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/services/cloudinary.service.dart';
 import 'package:juconfession/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -30,8 +32,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isUploading = false;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
+
+    if (!mounted) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -101,6 +114,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       InkWell(
                         onTap: () {
+                          if (snapshot.data!['followers'].length == 0) {
+                            return;
+                          }
                           //show modal bottom sheet
                           showModalBottomSheet(
                             context: context,
@@ -273,6 +289,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       InkWell(
                         onTap: () {
+                          if (snapshot.data!['following'].length == 0) {
+                            return;
+                          }
+
                           showModalBottomSheet(
                             context: context,
                             builder: (context) => SizedBox(
@@ -667,6 +687,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
+                  // email id show only to admin
+
+                  FutureBuilder(
+                      future: AuthMethod().isAdmin(),
+                      builder: (context, snapshot2) {
+                        if (snapshot2.hasData) {
+                          if (snapshot2.data == true) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: theme.themeMode == ThemeMode.light
+                                      ? Colors.grey.withOpacity(0.3)
+                                      : Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      snapshot.data!['email'],
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 2,
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        Clipboard.setData(
+                                          ClipboardData(
+                                              text: snapshot.data!['email']),
+                                        );
+                                        showSnackBar("Email copied", context);
+                                      },
+                                      icon: const Icon(
+                                        Icons.copy,
+                                        size: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return Container();
+                        }
+                      }),
+
                   //upload photos button
                   if (user!.uid == widget.uid)
                     Container(
