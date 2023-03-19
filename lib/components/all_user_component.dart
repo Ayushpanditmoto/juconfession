@@ -67,15 +67,21 @@ class UserComponent extends StatelessWidget {
                   children: [
                     AutoSizeText(
                       name,
-                      maxLines: 2,
+                      minFontSize: 8,
+                      maxFontSize: 12,
+                      maxLines: 1,
                     ),
                     AutoSizeText(
                       branch,
-                      maxLines: 2,
+                      minFontSize: 8,
+                      maxFontSize: 12,
+                      maxLines: 1,
                     ),
                     AutoSizeText(
                       year,
-                      maxLines: 2,
+                      minFontSize: 8,
+                      maxFontSize: 12,
+                      maxLines: 1,
                     ),
                   ],
                 ),
