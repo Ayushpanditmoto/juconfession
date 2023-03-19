@@ -15,7 +15,8 @@ class UserModel {
   final String faculty;
   final String gender;
   final String department;
-  final List<String> collectionPhotos;
+  final List<dynamic> collectionPhotos;
+  final DateTime dateofjoin;
 
   const UserModel({
     required this.name,
@@ -33,6 +34,7 @@ class UserModel {
     required this.department,
     required this.gender,
     required this.collectionPhotos,
+    required this.dateofjoin,
   });
 
   static UserModel fromSnap(DocumentSnapshot snap) {
@@ -54,6 +56,7 @@ class UserModel {
       department: snapshot["department"],
       gender: snapshot["gender"],
       collectionPhotos: snapshot["collectionPhotos"],
+      dateofjoin: snapshot["dateofjoin"] ?? DateTime.now(),
     );
   }
 
@@ -73,5 +76,6 @@ class UserModel {
         "department": department,
         "gender": gender,
         "collectionPhotos": collectionPhotos,
+        "dateofjoin": dateofjoin,
       };
 }

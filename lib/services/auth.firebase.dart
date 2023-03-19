@@ -85,6 +85,7 @@ class AuthMethod {
             department: department,
             gender: gender,
             collectionPhotos: [],
+            dateofjoin: DateTime.now(),
           );
 
           await _firestore
@@ -151,5 +152,12 @@ class AuthMethod {
   //logout
   Future<void> logout() async {
     await _auth.signOut();
+  }
+
+  //get user data from his uid
+  Future<UserModel> getUserData(String uid) async {
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(uid).get();
+    return UserModel.fromSnap(documentSnapshot);
   }
 }

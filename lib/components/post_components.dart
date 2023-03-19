@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -150,7 +151,7 @@ class Post extends StatelessWidget {
                       context: context,
                       builder: (context) {
                         return SizedBox(
-                          height: 200,
+                          height: MediaQuery.of(context).size.height * 0.3,
                           child: Column(
                             children: [
                               ListTile(
@@ -226,14 +227,35 @@ class Post extends StatelessWidget {
                                   leading: const Icon(Icons.delete),
                                   title: const Text('Delete Post (Admin Only)'),
                                 ),
+                              if (isAdminCheck == true)
+                                //profile page redirect
+                                ListTile(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                          uid: snaps['uid'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  leading: const Icon(Icons.person),
+                                  title:
+                                      const Text('View Profile (Admin Only)'),
+                                ),
                               ListTile(
                                 onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title:
-                                            const Text('Reply to Confession'),
+                                        title: const Text(
+                                            'Reply to Confession (coming soon)',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            )),
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -247,8 +269,10 @@ class Post extends StatelessWidget {
                                               children: [
                                                 const Spacer(),
                                                 ElevatedButton(
-                                                  onPressed: () {},
-                                                  child: const Text('Reply'),
+                                                  onPressed: () {
+                                                    //development stage
+                                                  },
+                                                  child: const Text('Reply '),
                                                 ),
                                               ],
                                             ),
@@ -566,7 +590,122 @@ class Post extends StatelessWidget {
                                     ? Colors.black
                                     : Colors.white,
                               ),
-                              child: Text('${snaps['likes'].length} Likes'),
+                              child: InkWell(
+                                  onTap: () {
+                                    //show modal bottom sheet
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) => SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.8,
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            const Text(
+                                              'Liked by',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                // fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    snaps['likes'].length,
+                                                itemBuilder: (context, index) {
+                                                  return FutureBuilder(
+                                                      future: FirebaseFirestore
+                                                          .instance
+                                                          .collection('users')
+                                                          .doc(snaps['likes']
+                                                              [index])
+                                                          .get(),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          //shimmer effect
+                                                          return ListTile(
+                                                            leading: Shimmer
+                                                                .fromColors(
+                                                              baseColor:
+                                                                  Colors.grey,
+                                                              highlightColor:
+                                                                  Colors.white,
+                                                              child:
+                                                                  const CircleAvatar(
+                                                                radius: 25,
+                                                              ),
+                                                            ),
+                                                            title: Shimmer
+                                                                .fromColors(
+                                                              baseColor:
+                                                                  Colors.grey,
+                                                              highlightColor:
+                                                                  Colors.white,
+                                                              child: const Text(
+                                                                'Loading...',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        15),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                        return ListTile(
+                                                          leading:
+                                                              CachedNetworkImage(
+                                                            width: 50,
+                                                            height: 50,
+                                                            imageUrl:
+                                                                snapshot.data![
+                                                                    'photoUrl'],
+                                                            imageBuilder: (context,
+                                                                    imageProvider) =>
+                                                                CircleAvatar(
+                                                              backgroundImage:
+                                                                  imageProvider,
+                                                            ),
+                                                            placeholder:
+                                                                (context,
+                                                                        url) =>
+                                                                    const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    const Icon(
+                                                              Icons.error,
+                                                              color: Colors
+                                                                  .redAccent,
+                                                            ),
+                                                          ),
+                                                          title: Text(
+                                                            snapshot
+                                                                .data!['name'],
+                                                          ),
+                                                        );
+                                                      });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child:
+                                      Text('${snaps['likes'].length} Likes')),
                             ),
                           ],
                         )
