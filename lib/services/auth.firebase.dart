@@ -92,7 +92,7 @@ class AuthMethod {
               .collection('users')
               .doc(user.uid)
               .set(users.toJson());
-          res = "Signed Up Successfully";
+          res = "Verification Email Sent";
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -126,11 +126,6 @@ class AuthMethod {
 
         User? user = userCredential.user;
         if (user != null) {
-          await _firestore
-              .collection('users')
-              .doc(user.uid)
-              .update({'isVerified': true});
-
           res = "Logged In Successfully";
         }
       }

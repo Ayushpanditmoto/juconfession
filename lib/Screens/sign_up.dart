@@ -212,6 +212,8 @@ class _SignUpState extends State<SignUp> {
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                           ),
+                          dropdownColor: Colors.white,
+                          style: const TextStyle(color: Colors.black),
                           value: selectedGender,
                           icon: const Icon(Icons.arrow_drop_down_circle,
                               color: Colors.black),
@@ -243,7 +245,9 @@ class _SignUpState extends State<SignUp> {
                               selectedDepartment = null;
                             });
                           },
+                          dropdownColor: Colors.white,
                           value: selectedFaculty,
+                          style: const TextStyle(color: Colors.black),
                           icon: const Icon(Icons.arrow_drop_down_circle,
                               color: Colors.black),
                           hint: const Text("Select Faculty",
@@ -271,6 +275,8 @@ class _SignUpState extends State<SignUp> {
                               border: InputBorder.none,
                             ),
                             value: selectedDepartment,
+                            dropdownColor: Colors.white,
+                            style: const TextStyle(color: Colors.black),
                             icon: const Icon(Icons.arrow_drop_down_circle,
                                 color: Colors.black),
                             hint: const Text("Select Department",
@@ -313,6 +319,7 @@ class _SignUpState extends State<SignUp> {
                             border: InputBorder.none,
                           ),
                           value: selectedStartYear,
+                          dropdownColor: Colors.white,
                           icon: const Icon(Icons.arrow_drop_down_circle,
                               color: Colors.black),
                           hint: const Text(
@@ -321,6 +328,7 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.black,
                             ),
                           ),
+                          style: const TextStyle(color: Colors.black),
                           items: year
                               .map((e) =>
                                   DropdownMenuItem(value: e, child: Text(e)))
@@ -342,6 +350,7 @@ class _SignUpState extends State<SignUp> {
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                           ),
+                          style: const TextStyle(color: Colors.black),
                           value: selectedEndYear,
                           icon: const Icon(Icons.arrow_drop_down_circle,
                               color: Colors.black),
@@ -351,6 +360,7 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.black,
                             ),
                           ),
+                          dropdownColor: Colors.white,
                           items: year
                               .map((e) =>
                                   DropdownMenuItem(value: e, child: Text(e)))
@@ -430,9 +440,9 @@ class _SignUpState extends State<SignUp> {
                       });
 
                       showSnackBar(result, context);
-                      if (result == 'Signed Up Successfully') {
+                      if (result == 'Verification Email Sent') {
                         Navigator.pushNamedAndRemoveUntil(
-                            context, RoutePath.confess, (route) => false);
+                            context, RoutePath.verifyEmail, (route) => false);
                       }
                     } catch (e) {
                       setState(() {

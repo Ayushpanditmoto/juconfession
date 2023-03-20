@@ -5,6 +5,7 @@ import '../Screens/home.dart';
 import '../Screens/sign_up.dart';
 import '../Screens/forgot_password.dart';
 import '../Screens/single_post.dart';
+import '../Screens/verify.email.dart';
 
 class RoutePath {
   static const String login = '/login';
@@ -12,6 +13,7 @@ class RoutePath {
   static const String signup = '/signup';
   static const String forgot = '/forgot';
   static const String singlePost = '/singlePost';
+  static const String verifyEmail = '/verifyEmail';
 
   static final routes = {
     login: (BuildContext context) => const Login(),
@@ -33,6 +35,8 @@ class RoutePath {
         return MaterialPageRoute(builder: (_) => const Forgot());
       case RoutePath.singlePost:
         return MaterialPageRoute(builder: (_) => const SinglePost());
+      case RoutePath.verifyEmail:
+        return MaterialPageRoute(builder: (_) => const VerifyEmail());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

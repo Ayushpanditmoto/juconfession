@@ -8,6 +8,7 @@ import 'package:juconfession/services/auth.firebase.dart';
 import 'package:upgrader/upgrader.dart';
 import 'Screens/login_page.dart';
 import 'Screens/nointernet.dart';
+import 'Screens/verify.email.dart';
 import 'firebase_options.dart';
 import 'provider/theme_provider.dart';
 import 'utils/route.dart';
@@ -84,6 +85,12 @@ class _MyAppState extends State<MyApp> {
                                 if (documentSnapshot.data() == null) {
                                   return const Login();
                                 }
+                                if ((documentSnapshot.data()
+                                        as dynamic)['isVerified'] ==
+                                    false) {
+                                  return const VerifyEmail();
+                                }
+
                                 if ((documentSnapshot.data()
                                         as dynamic)['isBanned'] ==
                                     true) {
