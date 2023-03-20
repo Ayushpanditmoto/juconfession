@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/post_components.dart';
+import 'package:juconfession/utils/route.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/theme_provider.dart';
@@ -20,6 +23,8 @@ class _ConfessionPageState extends State<ConfessionPage> {
     super.initState();
     isAdmin();
   }
+
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   void isAdmin() async {
     try {
@@ -40,10 +45,34 @@ class _ConfessionPageState extends State<ConfessionPage> {
     setState(() {});
   }
 
+  void checkUserExist() async {
+    //check whether user account exist or not in database
+    //redirect to login page if not exist
+    await auth.currentUser!.reload();
+    if (auth.currentUser!.emailVerified == false) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          RoutePath.verifyEmail, (Route<dynamic> route) => false);
+    }
+
+    final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    // check whether user account exist or not in database
+    if (documentSnapshot.data() as dynamic == null) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          RoutePath.login, (Route<dynamic> route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     // final user = Provider.of<UserProvider>(context).getCurrentUser();
+    //check whether user account exist or not in database
+
+    checkUserExist();
 
     return Scaffold(
       appBar: AppBar(

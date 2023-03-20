@@ -16,6 +16,7 @@ class VerifyEmail extends StatefulWidget {
 
 class _VerifyEmailState extends State<VerifyEmail> {
   bool isLoaded = false;
+  bool isLoaded1 = false;
   bool isButtonVisible = false;
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -89,15 +90,15 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     onPressed: () {
                       try {
                         setState(() {
-                          isLoaded = true;
+                          isLoaded1 = true;
                         });
                         checkEmailVerified();
                         setState(() {
-                          isLoaded = false;
+                          isLoaded1 = false;
                         });
                       } catch (e) {
                         setState(() {
-                          isLoaded = false;
+                          isLoaded1 = false;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -106,7 +107,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         );
                       }
                     },
-                    child: isLoaded
+                    child: isLoaded1
                         ? const SizedBox(
                             height: 20,
                             width: 20,
