@@ -35,6 +35,13 @@ class _MyAppState extends State<MyApp> {
   Connectivity connectivity = Connectivity();
 
   @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
@@ -84,14 +91,7 @@ class _MyAppState extends State<MyApp> {
                                     snapshot.data as DocumentSnapshot;
                                 if (documentSnapshot.data() == null) {
                                   return const Login();
-                                }
-                                if ((documentSnapshot.data()
-                                        as dynamic)['isVerified'] ==
-                                    false) {
-                                  return const VerifyEmail();
-                                }
-
-                                if ((documentSnapshot.data()
+                                } else if ((documentSnapshot.data()
                                         as dynamic)['isBanned'] ==
                                     true) {
                                   return Scaffold(
@@ -126,7 +126,12 @@ class _MyAppState extends State<MyApp> {
                                       ],
                                     ),
                                   );
+                                } else if ((documentSnapshot.data()
+                                        as dynamic)['isVerified'] ==
+                                    false) {
+                                  return const VerifyEmail();
                                 }
+
                                 return const Confession();
                               } else {
                                 return const Center(

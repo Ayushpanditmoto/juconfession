@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/all_user.dart';
@@ -19,6 +21,7 @@ class _ConfessionState extends State<Confession> {
   String name = '';
   int _page = 0;
   late PageController _pageController;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -35,6 +38,13 @@ class _ConfessionState extends State<Confession> {
 
   void navigationTapped(int page) {
     _pageController.jumpToPage(page);
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override

@@ -27,6 +27,7 @@ class _SignUpState extends State<SignUp> {
   bool isLogin = false;
   bool isImageUploaded = false;
   File? _image;
+  bool isChecked = false;
 
   List gender = ['Male', 'Female', 'Other'];
   String? selectedGender;
@@ -412,52 +413,133 @@ class _SignUpState extends State<SignUp> {
                 ),
 
                 const SizedBox(height: 10),
-                // login button
-                ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      if (_formKey.currentState!.validate() == false) return;
-                      if (_image == null) {
-                        return showSnackBar('Please select an image', context);
-                      }
-                      setState(() {
-                        isLogin = true;
-                      });
-                      String result = await AuthMethod().signUpUser(
-                        email: emailController.text,
-                        password: passwordController.text,
-                        name: nameController.text,
-                        image: File(_image!.path).readAsBytesSync(),
-                        gender: selectedGender!,
-                        department: selectedDepartment!,
-                        faculty: selectedFaculty!,
-                        startYear: selectedStartYear!,
-                        endYear: selectedEndYear!,
-                      );
-
-                      setState(() {
-                        isLogin = false;
-                      });
-
-                      showSnackBar(result, context);
-                      if (result == 'Verification Email Sent') {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, RoutePath.verifyEmail, (route) => false);
-                      }
-                    } catch (e) {
-                      setState(() {
-                        isLogin = false;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please Fill All The Fields'),
+                //check box for terms and condition
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              isChecked = value!;
+                            });
+                          },
                         ),
-                      );
-                    }
+                        const Text(
+                          'I agree to the ',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const TermsAndCondition()));
+                          },
+                          child: const Text(
+                            'Terms and Conditions',
+                            style: TextStyle(
+                              color: Colors.white,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                        //and privacy policy
+                        const Text(
+                          ' and ',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const PrivacyPolicy()));
+                      },
+                      child: const Text(
+                        'Privacy Policy',
+                        style: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                //Bullet point
+                Column(
+                  children: const [
+                    Text(
+                      '• You must be a student of the Jadavpur University',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
 
-                    // Navigator.pushNamed(context, RoutePath.confess);
-                  },
+                const SizedBox(height: 10),
+
+                ElevatedButton(
+                  onPressed: !isChecked
+                      ? null
+                      : () async {
+                          try {
+                            if (_formKey.currentState!.validate() == false) {
+                              return;
+                            }
+
+                            if (_image == null) {
+                              return showSnackBar(
+                                  'Please select an image', context);
+                            }
+                            setState(() {
+                              isLogin = true;
+                            });
+                            String result = await AuthMethod().signUpUser(
+                              email: emailController.text,
+                              password: passwordController.text,
+                              name: nameController.text,
+                              image: File(_image!.path).readAsBytesSync(),
+                              gender: selectedGender!,
+                              department: selectedDepartment!,
+                              faculty: selectedFaculty!,
+                              startYear: selectedStartYear!,
+                              endYear: selectedEndYear!,
+                            );
+
+                            setState(() {
+                              isLogin = false;
+                            });
+
+                            showSnackBar(result, context);
+                            if (result == 'Verification Email Sent') {
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  RoutePath.verifyEmail, (route) => false);
+                            }
+                          } catch (e) {
+                            setState(() {
+                              isLogin = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please Fill All The Fields'),
+                              ),
+                            );
+                          }
+
+                          // Navigator.pushNamed(context, RoutePath.confess);
+                        },
                   style: ElevatedButton.styleFrom(
+                    disabledBackgroundColor: Colors.grey,
+                    disabledForegroundColor: Colors.black,
                     foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     minimumSize: const Size(160, 50),

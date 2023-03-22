@@ -28,6 +28,28 @@ class _VerifyEmailState extends State<VerifyEmail> {
   void initState() {
     super.initState();
     startTimer();
+    //sent email verification
+
+    sendEmailVerification();
+  }
+
+  void sendEmailVerification() async {
+    try {
+      // await auth.currentUser!.sendEmailVerification();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   void startTimer() {
@@ -47,20 +69,41 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   void checkEmailVerified() async {
-    await auth.currentUser!.reload();
+    // await auth.currentUser!.reload();
     if (auth.currentUser!.emailVerified) {
       await firestore
           .collection('users')
           .doc(auth.currentUser!.uid)
           .update({'isVerified': true});
+      // Navigator.of(context).pushNamedAndRemoveUntil(
+      //     RoutePath.confess, (Route<dynamic> route) => false);
+
       Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutePath.confess, (Route<dynamic> route) => false);
+          RoutePath.home, (Route<dynamic> route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Email not verified'),
         ),
       );
+    }
+  }
+
+  //check user verified or not from database
+  Future<bool> isVerified() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isVerified is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return false;
+      }
+      return (documentSnapshot.data() as dynamic)['isVerified'] ?? false;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -74,7 +117,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Welcome ${auth.currentUser!.email}'),
+                  Text(
+                      'Welcome ${auth.currentUser != null ? auth.currentUser!.email : ''}'),
                   const SizedBox(
                     height: 10,
                   ),
@@ -87,7 +131,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
                   //Verify button
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       try {
                         setState(() {
                           isLoaded1 = true;

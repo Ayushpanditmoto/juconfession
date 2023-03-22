@@ -38,4 +38,31 @@ class UserProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  //like a confession
+  Future<String> likePost(String postId, String uid, List likes) async {
+    String res = "Some error occurred";
+    try {
+      if (likes.contains(uid)) {
+        // if the likes list contains the user uid, we need to remove it
+        _firestore.collection('confession').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
+        notifyListeners();
+      } else {
+        // else we need to add uid to the likes array
+        _firestore.collection('confession').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+        notifyListeners();
+      }
+
+      res = 'success';
+      notifyListeners();
+    } catch (err) {
+      res = err.toString();
+      notifyListeners();
+    }
+    return res;
+  }
 }

@@ -8,22 +8,6 @@ class AuthMethod {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<UserModel> getUserDetails() async {
-    User? currentUser = _auth.currentUser;
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection('users').doc(currentUser!.uid).get();
-    return UserModel.fromSnap(documentSnapshot);
-  }
-
-  Future<bool> authenticateUser(User user) async {
-    QuerySnapshot result = await _firestore
-        .collection('users')
-        .where('email', isEqualTo: user.email)
-        .get();
-    final List<DocumentSnapshot> docs = result.docs;
-    return docs.isEmpty ? true : false;
-  }
-
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -126,7 +110,11 @@ class AuthMethod {
 
         User? user = userCredential.user;
         if (user != null) {
-          res = "Logged In Successfully";
+          if (user.emailVerified && await isVerified() == true) {
+            res = "Logged In Successfully";
+          } else {
+            res = "Email not verified";
+          }
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -142,6 +130,24 @@ class AuthMethod {
       debugPrint(e.toString());
     }
     return res;
+  }
+
+  //check user verified or not from database
+  Future<bool> isVerified() async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      //check if isVerified is available or not
+      if (documentSnapshot.data() as dynamic == null) {
+        return false;
+      }
+      return (documentSnapshot.data() as dynamic)['isVerified'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   //logout

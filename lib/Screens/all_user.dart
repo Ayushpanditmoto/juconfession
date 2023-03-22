@@ -82,10 +82,38 @@ class _AllUsersState extends State<AllUsers> {
                             false,
                         isLove: snapshot.data!.docs[index].data()['isLove'] ??
                             false,
+                        isVerified:
+                            snapshot.data!.docs[index].data()['isVerified'] ??
+                                false,
                         loveMessage:
                             snapshot.data!.docs[index].data()['loveMessage'] ??
                                 '',
                         tap: () {
+                          //profile locked dialog for isLove users
+                          if (snapshot.data!.docs[index].data()['isLove'] ??
+                              false) {
+                            if (snapshot.data!.docs[index].data()['isAdmin'] !=
+                                null) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Profile Locked'),
+                                  content: const Text(
+                                      'Profile is locked for this user.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              return;
+                            }
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(

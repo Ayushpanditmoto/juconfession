@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:juconfession/main.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
-import 'package:juconfession/utils/utils.dart';
 import '../components/custom_text_field.dart';
 
 class Login extends StatefulWidget {
@@ -19,6 +19,13 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
   bool isLoading = false;
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void dispose() {
@@ -104,9 +111,18 @@ class _LoginState extends State<Login> {
                       isLoading = false;
                     });
 
-                    showSnackBar(result, context);
-                    if (result == 'Logged In Successfully') {
-                      Navigator.pushNamed(context, RoutePath.confess);
+                    //check user is verified or not
+                    if (result == 'Email not verified') {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, RoutePath.verifyEmail, (route) => false);
+                    } else if (result == 'Logged In Successfully') {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyApp(),
+                        ),
+                        (route) => false,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

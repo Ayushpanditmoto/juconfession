@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:juconfession/main.dart';
 
 import '../Screens/login_page.dart';
 import '../Screens/home.dart';
@@ -8,6 +9,7 @@ import '../Screens/single_post.dart';
 import '../Screens/verify.email.dart';
 
 class RoutePath {
+  static const String home = '/home';
   static const String login = '/login';
   static const String confess = '/confess';
   static const String signup = '/signup';
@@ -25,6 +27,8 @@ class RoutePath {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case RoutePath.home:
+        return MaterialPageRoute(builder: (_) => const MyApp());
       case RoutePath.login:
         return MaterialPageRoute(builder: (_) => const Login());
       case RoutePath.confess:

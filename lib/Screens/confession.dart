@@ -24,6 +24,13 @@ class _ConfessionPageState extends State<ConfessionPage> {
     isAdmin();
   }
 
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   FirebaseAuth auth = FirebaseAuth.instance;
 
   void isAdmin() async {
@@ -45,34 +52,9 @@ class _ConfessionPageState extends State<ConfessionPage> {
     setState(() {});
   }
 
-  void checkUserExist() async {
-    //check whether user account exist or not in database
-    //redirect to login page if not exist
-    await auth.currentUser!.reload();
-    if (auth.currentUser!.emailVerified == false) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutePath.verifyEmail, (Route<dynamic> route) => false);
-    }
-
-    final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-
-    // check whether user account exist or not in database
-    if (documentSnapshot.data() as dynamic == null) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutePath.login, (Route<dynamic> route) => false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    // final user = Provider.of<UserProvider>(context).getCurrentUser();
-    //check whether user account exist or not in database
-
-    checkUserExist();
 
     return Scaffold(
       appBar: AppBar(
@@ -215,6 +197,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
                   TextButton(
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacementNamed(context, RoutePath.login);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -312,55 +295,42 @@ class _ConfessionPageState extends State<ConfessionPage> {
 
               return Column(
                 children: [
-                  //message to admin
-                  // if (isAdminCheck = false)
-                  //   const Padding(
-                  //     padding: EdgeInsets.all(8.0),
-                  //     child: Text(
-                  //       'You are an admin. You can delete any post',
-                  //       style: TextStyle(
-                  //         color: Colors.red,
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
-                  //   ),
-                  //list of posts
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc('W1W8Jtr5JcT7Loww1kUjqpDO6yh2')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.data!.data()!['adminNote'] == null ||
-                            snapshot.data!.data()!['adminNote'] == '') {
-                          return const SizedBox();
-                        }
+                  // StreamBuilder(
+                  //     stream: FirebaseFirestore.instance
+                  //         .collection('users')
+                  //         .doc('W1W8Jtr5JcT7Loww1kUjqpDO6yh2')
+                  //         .snapshots(),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         print('waiting2');
+                  //         return const Center(
+                  //           child: CircularProgressIndicator(),
+                  //         );
+                  //       }
+                  //       if (snapshot.data!.data()!['adminNote'] == null ||
+                  //           snapshot.data!.data()!['adminNote'] == '') {
+                  //         return const SizedBox();
+                  //       }
 
-                        return Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Admin Note',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(snapshot.data!.data()!['adminNote']),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(12.0),
+                  //         child: Column(
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             const Text(
+                  //               'Admin Note',
+                  //               style: TextStyle(
+                  //                 color: Colors.red,
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
+                  //             ),
+                  //             Text(snapshot.data!.data()!['adminNote']),
+                  //           ],
+                  //         ),
+                  //       );
+                  //     }),
+
                   Expanded(
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),

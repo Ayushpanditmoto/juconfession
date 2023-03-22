@@ -9,6 +9,7 @@ class UserComponent extends StatelessWidget {
   final String imageUrl;
   final bool isAdmin;
   final bool isLove;
+  final bool isVerified;
   final String loveMessage;
   final VoidCallback tap;
 
@@ -20,6 +21,7 @@ class UserComponent extends StatelessWidget {
     required this.imageUrl,
     required this.isAdmin,
     required this.isLove,
+    required this.isVerified,
     required this.tap,
     required this.loveMessage,
   });
@@ -52,12 +54,18 @@ class UserComponent extends StatelessWidget {
                     top: 0,
                     right: 0,
                     child: Icon(
-                      isLove ? Icons.favorite : Icons.verified,
+                      isLove
+                          ? Icons.favorite
+                          : isVerified
+                              ? Icons.verified
+                              : Icons.dangerous,
                       color: isAdmin
                           ? Colors.yellow
-                          : !isLove
+                          : isVerified
                               ? Colors.blue
-                              : Colors.red,
+                              : isLove
+                                  ? Colors.red
+                                  : Colors.grey,
                       shadows: const [
                         Shadow(
                           color: Colors.black,
