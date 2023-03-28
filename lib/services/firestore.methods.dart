@@ -27,7 +27,7 @@ class FirestoreMethods {
 
       String postId = const Uuid().v4();
 
-      Post post = Post(
+      PostModel post = PostModel(
         confession: confession,
         uid: uid,
         likes: [],
