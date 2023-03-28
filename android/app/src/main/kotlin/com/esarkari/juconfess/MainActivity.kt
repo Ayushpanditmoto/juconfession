@@ -1,4 +1,4 @@
-package com.example.juconfession
+package com.esarkari.juconfess
 
 import io.flutter.embedding.android.FlutterActivity
 

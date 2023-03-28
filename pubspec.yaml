@@ -33,6 +33,7 @@ dependencies:
   cloud_firestore: ^4.4.3
   cloudinary: ^1.1.0
   comment_tree: ^0.3.0
+  change_app_package_name: ^1.1.0
   connectivity_plus: ^3.0.3
   cupertino_icons: ^1.0.2
   firebase_auth: ^4.2.9
