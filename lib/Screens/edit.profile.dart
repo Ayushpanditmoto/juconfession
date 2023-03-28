@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:juconfession/services/cloudinary.service.dart';
+import 'package:juconfession/services/firestore.methods.dart';
 
 class EditProfile extends StatefulWidget {
   final String uid;
@@ -20,15 +21,12 @@ class _EditProfileState extends State<EditProfile> {
   File? _image;
   bool isUpdating = false;
   TextEditingController bioController = TextEditingController();
+  FirebaseFirestore firestore = FirestoreMethods().firestore;
 
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uid)
-        .get()
-        .then((value) {
+    firestore.collection('users').doc(widget.uid).get().then((value) {
       bioController.text = value['bio'];
     });
   }
@@ -67,7 +65,7 @@ class _EditProfileState extends State<EditProfile> {
                         backgroundColor: Colors.transparent,
                       )
                     : StreamBuilder(
-                        stream: FirebaseFirestore.instance
+                        stream: firestore
                             .collection('users')
                             .doc(widget.uid)
                             .snapshots(),
@@ -144,17 +142,11 @@ class _EditProfileState extends State<EditProfile> {
                   setState(() {
                     isUpdating = true;
                   });
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(widget.uid)
-                      .update({
+                  firestore.collection('users').doc(widget.uid).update({
                     'bio': bioController.text,
                   });
                 } else {
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(widget.uid)
-                      .update({
+                  firestore.collection('users').doc(widget.uid).update({
                     'bio': bioController.text,
                     'photoUrl': imageUrl,
                   });

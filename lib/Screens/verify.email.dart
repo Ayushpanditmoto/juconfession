@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:juconfession/services/auth.firebase.dart';
+import 'package:juconfession/services/firestore.methods.dart';
 import 'package:juconfession/utils/route.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -19,8 +21,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
   bool isLoaded1 = false;
   bool isButtonVisible = false;
 
-  FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = AuthMethod().auth;
+  FirebaseFirestore firestore = FirestoreMethods().firestore;
 
   int secondsRemaining = 30;
 
@@ -35,7 +37,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   void sendEmailVerification() async {
     try {
-      // await auth.currentUser!.sendEmailVerification();
+      await auth.currentUser!.sendEmailVerification();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

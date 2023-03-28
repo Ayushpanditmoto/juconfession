@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/comment.card.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import 'package:shimmer/shimmer.dart';
 // import 'package:comment_tree/comment_tree.dart';
@@ -19,7 +20,9 @@ class _CommentsState extends State<Comments> {
   final TextEditingController commentEditingController =
       TextEditingController();
 
-  User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseFirestore firestore = FirestoreMethods().firestore;
+
+  User? user = AuthMethod().auth.currentUser;
 
   @override
   void dispose() {
@@ -35,7 +38,7 @@ class _CommentsState extends State<Comments> {
         centerTitle: true,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance
+        stream: firestore
             .collection('confession')
             .doc(widget.snaps['postId'])
             .collection('comments')
@@ -148,10 +151,8 @@ class _CommentsState extends State<Comments> {
           child: Row(
             children: [
               StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(user!.uid)
-                      .snapshots(),
+                  stream:
+                      firestore.collection('users').doc(user!.uid).snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ClipRRect(

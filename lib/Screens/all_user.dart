@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/components/all_user_component.dart';
 import 'package:juconfession/provider/theme_provider.dart';
+import 'package:juconfession/services/firestore.methods.dart';
 import 'package:provider/provider.dart';
 
 class AllUsers extends StatefulWidget {
@@ -14,6 +15,7 @@ class AllUsers extends StatefulWidget {
 
 class _AllUsersState extends State<AllUsers> {
   final TextEditingController searchController = TextEditingController();
+  FirebaseFirestore firestore = FirestoreMethods().firestore;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +55,8 @@ class _AllUsersState extends State<AllUsers> {
           Expanded(
             child: StreamBuilder(
                 stream: searchController.text.isEmpty
-                    ? FirebaseFirestore.instance.collection('users').snapshots()
-                    : FirebaseFirestore.instance
+                    ? firestore.collection('users').snapshots()
+                    : firestore
                         .collection('users')
                         .where('name',
                             isGreaterThanOrEqualTo: searchController.text)

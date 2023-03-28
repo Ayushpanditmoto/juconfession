@@ -295,42 +295,6 @@ class _ConfessionPageState extends State<ConfessionPage> {
 
               return Column(
                 children: [
-                  // StreamBuilder(
-                  //     stream: FirebaseFirestore.instance
-                  //         .collection('users')
-                  //         .doc('W1W8Jtr5JcT7Loww1kUjqpDO6yh2')
-                  //         .snapshots(),
-                  //     builder: (context, snapshot) {
-                  //       if (snapshot.connectionState ==
-                  //           ConnectionState.waiting) {
-                  //         print('waiting2');
-                  //         return const Center(
-                  //           child: CircularProgressIndicator(),
-                  //         );
-                  //       }
-                  //       if (snapshot.data!.data()!['adminNote'] == null ||
-                  //           snapshot.data!.data()!['adminNote'] == '') {
-                  //         return const SizedBox();
-                  //       }
-
-                  //       return Padding(
-                  //         padding: const EdgeInsets.all(12.0),
-                  //         child: Column(
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             const Text(
-                  //               'Admin Note',
-                  //               style: TextStyle(
-                  //                 color: Colors.red,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //             ),
-                  //             Text(snapshot.data!.data()!['adminNote']),
-                  //           ],
-                  //         ),
-                  //       );
-                  //     }),
-
                   Expanded(
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),

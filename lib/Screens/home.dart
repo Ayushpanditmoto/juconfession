@@ -7,6 +7,7 @@ import 'package:juconfession/Screens/confession.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/Screens/trending.dart';
 import 'package:juconfession/Screens/video_chat.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 
 import 'addconfess.screen.dart';
 
@@ -21,7 +22,7 @@ class _ConfessionState extends State<Confession> {
   String name = '';
   int _page = 0;
   late PageController _pageController;
-  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth = AuthMethod().auth;
 
   @override
   void initState() {

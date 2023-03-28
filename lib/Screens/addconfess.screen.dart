@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:juconfession/provider/theme_provider.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ class AddConfession extends StatefulWidget {
 
 class _AddConfessionState extends State<AddConfession> {
   TextEditingController confessionController = TextEditingController();
+  FirebaseAuth auth = AuthMethod().auth;
   bool isLoading = false;
   List gender = ['Male', 'Female', 'Other'];
   String? selectedGender;
@@ -181,7 +183,7 @@ class _AddConfessionState extends State<AddConfession> {
                   }
 
                   String rev = await FirestoreMethods().uploadConfess(
-                    uid: FirebaseAuth.instance.currentUser!.uid,
+                    uid: auth.currentUser!.uid,
                     confession: confessionController.text,
                     department: selectedDepartment!,
                     gender: selectedGender!,

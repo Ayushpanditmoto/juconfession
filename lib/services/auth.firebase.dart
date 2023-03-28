@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:juconfession/services/firestore.methods.dart';
 import '../model/user.model.dart';
 import 'cloudinary.service.dart';
 
 class AuthMethod {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  //getter
+  FirebaseAuth get auth => _auth;
+
+  final FirebaseFirestore _firestore = FirestoreMethods().firestore;
 
   Future<String> signUpUser({
     required String email,

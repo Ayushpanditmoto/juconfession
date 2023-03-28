@@ -9,6 +9,9 @@ import 'cloudinary.service.dart';
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  //getter
+  FirebaseFirestore get firestore => _firestore;
+
   Future<String> uploadConfess({
     required String confession,
     required Uint8List image,
