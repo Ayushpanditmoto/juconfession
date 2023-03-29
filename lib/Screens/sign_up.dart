@@ -2,7 +2,10 @@
 
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:juconfession/Screens/privacy.dart';
+import 'package:juconfession/Screens/terms.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
 import 'package:juconfession/utils/utils.dart';
@@ -426,50 +429,82 @@ class _SignUpState extends State<SignUp> {
                             });
                           },
                         ),
-                        const Text(
-                          'I agree to the ',
-                          style: TextStyle(
-                            color: Colors.white,
+                        RichText(
+                          textScaleFactor: 1.3,
+                          text: TextSpan(
+                            text: 'I agree to the ',
+                            style: const TextStyle(color: Colors.white),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Terms and Conditions  \n',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TermsAndCondition()));
+                                  },
+                              ),
+                              const TextSpan(
+                                text: ' and ',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Privacy Policy',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const Privacy(),
+                                      ),
+                                    );
+                                  },
+                              ),
+                            ],
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const TermsAndCondition()));
-                          },
-                          child: const Text(
-                            'Terms and Conditions',
-                            style: TextStyle(
-                              color: Colors.white,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                        //and privacy policy
-                        const Text(
-                          ' and ',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
+
+                        // const Text(
+                        //   'I agree to the ',
+                        //   style: TextStyle(
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     // Navigator.push(
+                        //     //     context,
+                        //     //     MaterialPageRoute(
+                        //     //         builder: (context) => const TermsAndCondition()));
+                        //   },
+                        //   child: const Text(
+                        //     'Terms and Conditions',
+                        //     style: TextStyle(
+                        //       color: Colors.white,
+                        //       decoration: TextDecoration.underline,
+                        //     ),
+                        //   ),
+                        // ),
+                        // //and privacy policy
+                        // const Text(
+                        //   ' and ',
+                        //   style: TextStyle(
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
                       ],
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => const PrivacyPolicy()));
-                      },
-                      child: const Text(
-                        'Privacy Policy',
-                        style: TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
                     ),
                   ],
                 ),
