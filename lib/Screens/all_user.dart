@@ -55,7 +55,10 @@ class _AllUsersState extends State<AllUsers> {
           Expanded(
             child: StreamBuilder(
                 stream: searchController.text.isEmpty
-                    ? firestore.collection('users').snapshots()
+                    ? firestore
+                        .collection('users')
+                        .where('isVerified', isEqualTo: true)
+                        .snapshots()
                     : firestore
                         .collection('users')
                         .where('name',
@@ -65,6 +68,11 @@ class _AllUsersState extends State<AllUsers> {
                   if (!snapshot.hasData) {
                     return const Center(
                       child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text('No user found'),
                     );
                   }
                   return GridView.builder(
