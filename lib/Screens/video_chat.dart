@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:peerdart/peerdart.dart';
@@ -13,16 +11,28 @@ import 'package:provider/provider.dart';
 import '../provider/theme_provider.dart';
 
 class VideoChat extends StatefulWidget {
-  const VideoChat({super.key});
+  final String createdBy;
+  final String incoming;
+  final bool isAvailable;
+  final bool firstTime;
+
+  const VideoChat(
+      {super.key,
+      required this.createdBy,
+      required this.incoming,
+      required this.isAvailable,
+      required this.firstTime});
 
   @override
   State<VideoChat> createState() => _VideoChatState();
 }
 
-class _VideoChatState extends State<VideoChat> {
+class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
   double left = 100;
   double top = 100;
-  final Peer peer = Peer();
+  final Peer peer = Peer(
+    id: FirebaseAuth.instance.currentUser!.uid,
+  );
   final RTCVideoRenderer localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   final TextEditingController _controller = TextEditingController();
@@ -60,7 +70,8 @@ class _VideoChatState extends State<VideoChat> {
   String? generatePeerId() {
     peer.on('open').listen((id) {
       setState(() {
-        peerId = id;
+        // peerId = id;
+        peerId = FirebaseAuth.instance.currentUser!.uid;
       });
     });
     return peer.id;
@@ -72,6 +83,7 @@ class _VideoChatState extends State<VideoChat> {
     requestMultiplePermissions();
     initRenderers();
     peerId = generatePeerId();
+
     peer.on<MediaConnection>("call").listen((call) async {
       final mediaStream = await navigator.mediaDevices
           .getUserMedia({"video": true, "audio": true});
@@ -94,21 +106,40 @@ class _VideoChatState extends State<VideoChat> {
         });
       });
     });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (widget.firstTime == true) {
+        connect(widget.incoming);
+      }
+    });
   }
 
-  //getuser media function
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      if (mounted) {
+        closeCameraStream();
+        peer.dispose();
+        _controller.dispose();
+        localRenderer.dispose();
+        remoteRenderer.dispose();
+      }
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
   void dispose() {
-    closeCameraStream();
-    peer.dispose();
-    _controller.dispose();
-    localRenderer.dispose();
-    remoteRenderer.dispose();
+    if (mounted) {
+      closeCameraStream();
+      peer.dispose();
+      _controller.dispose();
+      localRenderer.dispose();
+      remoteRenderer.dispose();
+    }
     super.dispose();
   }
 
@@ -116,12 +147,16 @@ class _VideoChatState extends State<VideoChat> {
     final mediaStream = await navigator.mediaDevices
         .getUserMedia({"video": true, "audio": true});
 
+    debugPrint("Status: $incoming");
+
     // final conn = peer.call(_controller.text, mediaStream);
     final conn = peer.call(incoming, mediaStream);
 
     conn.on("close").listen((event) {
       setState(() {
         inCall = false;
+
+        Navigator.pop(context);
       });
     });
 
@@ -160,66 +195,6 @@ class _VideoChatState extends State<VideoChat> {
     } catch (e) {
       debugPrint(e.toString());
     }
-  }
-
-  void createRoom() {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final DatabaseReference database =
-        FirebaseDatabase.instance.ref().child("rooms");
-
-    _streamSubscription = database
-        .orderByChild("status")
-        .equalTo(0)
-        .limitToFirst(1)
-        .onValue
-        .listen((event) {
-      debugPrint("ayush event ${event.snapshot.value}");
-      if (event.snapshot.children.isNotEmpty) {
-        //room available
-
-        debugPrint("ayush room available");
-
-        for (DataSnapshot childsnap in event.snapshot.children) {
-          if (childsnap.key == auth.currentUser!.uid) {
-            continue;
-          }
-          debugPrint("ayush childsnap ${childsnap.key}");
-          debugPrint("ayush childsnap ${childsnap.value}");
-          debugPrint(
-              "ayush childsnap ${childsnap.child("incomingCall").value}");
-          database.child(childsnap.key!).update({
-            "incomingCall": childsnap.child("incomingCall").value,
-            "status": 1,
-            "isAvailable": false,
-          });
-        }
-        if (inCall && peerId!.isNotEmpty) {
-          connect(peerId!);
-        }
-      } else {
-        //room not available
-
-        Map room = {
-          "createdBy": peerId,
-          "incomingCall": peerId,
-          "status": 0,
-          "isAvailable": true,
-        };
-        database.child(auth.currentUser!.uid).set(room).whenComplete(() {
-          debugPrint("ayush room created");
-
-          // database.child(auth.currentUser!.uid).onValue.listen((event) {
-          //   if (event.snapshot.child("status").exists &&
-          //       event.snapshot.child("status").value == 1) {
-          //     debugPrint("ayush: call accepted");
-          //     if (inCall) {
-          //       connect(event.snapshot.child("incomingCall").value as String);
-          //     }
-          //   }
-          // });
-        });
-      }
-    });
   }
 
   @override
@@ -309,18 +284,19 @@ class _VideoChatState extends State<VideoChat> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      if (_controller.text.isNotEmpty &&
-                                          _controller.text.length > 5) {
-                                        connect(_controller.text);
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                'Please enter Your Friend peer id'),
-                                          ),
-                                        );
-                                      }
+                                      connect(widget.incoming);
+                                      // if (_controller.text.isNotEmpty &&
+                                      //     _controller.text.length > 5) {
+                                      //   connect(_controller.text);
+                                      // } else {
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(
+                                      //     const SnackBar(
+                                      //       content: Text(
+                                      //           'Please enter Your Friend peer id'),
+                                      //     ),
+                                      //   );
+                                      // }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
@@ -336,6 +312,19 @@ class _VideoChatState extends State<VideoChat> {
                               ),
                         const SizedBox(
                           height: 10,
+                        ),
+                        Text(widget.createdBy),
+                        TextButton(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(
+                                text: widget.incoming.toString()));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Peer id copied to clipboard'),
+                              ),
+                            );
+                          },
+                          child: Text(widget.incoming),
                         ),
                         ElevatedButton(
                           onPressed: () {

@@ -6,10 +6,10 @@ import 'package:juconfession/Screens/all_user.dart';
 import 'package:juconfession/Screens/confession.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/Screens/trending.dart';
-import 'package:juconfession/Screens/video_chat.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 
 import 'addconfess.screen.dart';
+import 'video_chat_test.dart';
 
 class Confession extends StatefulWidget {
   const Confession({super.key});
@@ -122,11 +122,10 @@ class _ConfessionState extends State<Confession> {
                     // navigationTapped(_page);
 
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const VideoChat(),
-                      ),
-                    );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ConnectingActivity(),
+                        ));
                   });
                 },
                 icon: Icon(
@@ -160,7 +159,8 @@ class _ConfessionState extends State<Confession> {
             const TrendingPage(),
             const AllUsers(),
             const AddConfession(),
-            const VideoChat(),
+            const ConnectingActivity(),
+            // const VideoChat(),
             ProfileScreen(
               uid: FirebaseAuth.instance.currentUser!.uid,
             ),
