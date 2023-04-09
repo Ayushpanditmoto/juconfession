@@ -87,8 +87,7 @@ class _CommentsState extends State<Comments> {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              }
-              if (snapshot1.hasData == true) {
+              } else if (snapshot1.data == true) {
                 return SizedBox(
                   height: 50,
                   width: MediaQuery.of(context).size.width,

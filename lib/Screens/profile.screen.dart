@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: CircularProgressIndicator(),
           );
         }
-        if (snapshot1.hasData == true) {
+        if (snapshot1.data == true) {
           return const Scaffold(
             body: Center(
               child: Text("Anonymous User Can't View Profile"),

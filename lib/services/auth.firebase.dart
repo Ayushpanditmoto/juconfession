@@ -106,8 +106,9 @@ class AuthMethod {
     try {
       UserCredential userCredential = await _auth.signInAnonymously();
       User? user = userCredential.user;
-      SaveLocalData.saveDataBool('isAnonymous', true);
       if (user != null) {
+        await SaveLocalData.reload();
+        SaveLocalData.saveDataBool('isAnonymous', true);
         res = "Logged In Successfully";
       }
     } on FirebaseAuthException catch (e) {
@@ -179,6 +180,8 @@ class AuthMethod {
 
   //logout
   Future<void> logout() async {
+    await SaveLocalData.clearData();
+    await SaveLocalData.reload();
     await _auth.signOut();
   }
 

@@ -14,11 +14,26 @@ class SaveLocalData {
   //Boolean
   static Future<void> saveDataBool(String key, bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.reload();
     prefs.setBool(key, value);
   }
 
   static Future<bool> getDataBool(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.reload();
     return prefs.getBool(key) ?? false;
+  }
+
+  //Clear
+  static Future<void> clearData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.clear();
+  }
+
+  //reload
+  static Future<void> reload() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.reload();
   }
 }

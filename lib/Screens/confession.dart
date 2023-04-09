@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/post_components.dart';
 import 'package:juconfession/constant.dart';
+import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
 import 'package:provider/provider.dart';
 
@@ -198,7 +199,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
                   //Logout
                   TextButton(
                     onPressed: () {
-                      FirebaseAuth.instance.signOut();
+                      AuthMethod().logout();
                       Navigator.pushReplacementNamed(context, RoutePath.login);
                     },
                     child: Container(
