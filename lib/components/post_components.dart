@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/components/like.animation.dart';
 import 'package:juconfession/constant.dart';
-import 'package:juconfession/utils/save.localdata.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../Screens/comments.Screen.dart';
@@ -22,6 +21,7 @@ class Post extends StatelessWidget {
   final Map<String, dynamic> snaps;
   final int index;
   final bool isAdminCheck;
+
   const Post(
       {super.key,
       required this.snaps,
@@ -31,6 +31,7 @@ class Post extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
     final user = FirebaseAuth.instance.currentUser;
+
     return Card(
       key: key,
       elevation: 2,
@@ -44,50 +45,35 @@ class Post extends StatelessWidget {
           children: [
             Row(
               children: [
-                GestureDetector(
-                  onDoubleTap: () {
-                    if (isAdminCheck == true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(
-                            uid: snaps['uid'],
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: CachedNetworkImage(
-                    imageUrl: snaps['gender'] == 'Male'
-                        ? 'https://i1.sndcdn.com/artworks-ywcx1pUzUGGvjwmH-BUNWRA-t500x500.jpg'
-                        : 'https://i.kym-cdn.com/photos/images/newsfeed/002/386/213/ce9.jpg',
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 40.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
-                      ),
+                CachedNetworkImage(
+                  imageUrl: snaps['gender'] == 'Male'
+                      ? 'https://i1.sndcdn.com/artworks-ywcx1pUzUGGvjwmH-BUNWRA-t500x500.jpg'
+                      : 'https://i.kym-cdn.com/photos/images/newsfeed/002/386/213/ce9.jpg',
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
                     ),
-                    placeholder: (context, url) => ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(40)),
-                      child: Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
                   ),
+                  placeholder: (context, url) => ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(width: 10),
                 Column(
@@ -423,29 +409,23 @@ class Post extends StatelessWidget {
                   smallLike: true,
                   child: IconButton(
                     onPressed: () {
-                      SaveLocalData.getDataBool('isAnonymous').then((value) {
-                        if (value == true) {
-                          // one Time only
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content:
-                                  Text('You cannot like a post anonymously'),
-                            ),
-                          );
-                          //hide snackbar after 3 seconds
-                          Future.delayed(const Duration(seconds: 1), () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          });
-                        } else {
-                          FirestoreMethods().likePost(
-                            snaps['postId'],
-                            user.uid,
-                            snaps['likes'],
-                          );
-                        }
-                      });
+                      if (!user.isAnonymous) {
+                        FirestoreMethods().likePost(
+                          snaps['postId'],
+                          user.uid,
+                          snaps['likes'],
+                        );
+                      } else {
+                        //hide current snackbar if any
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        //1sec
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('You need to login to like a post'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      }
                     },
                     icon: Icon(
                       Icons.favorite,

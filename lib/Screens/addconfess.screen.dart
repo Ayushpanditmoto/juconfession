@@ -237,6 +237,7 @@ class _AddConfessionState extends State<AddConfession> {
               const SizedBox(
                 height: 20,
               ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Container(

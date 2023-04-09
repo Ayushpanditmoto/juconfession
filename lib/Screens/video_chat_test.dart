@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:juconfession/Screens/video_chat.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ConnectingActivity extends StatefulWidget {
   const ConnectingActivity({super.key});
@@ -25,9 +26,24 @@ class _ConnectingActivityState extends State<ConnectingActivity>
   @override
   void initState() {
     super.initState();
+    requestMultiplePermissions();
     WidgetsBinding.instance.addObserver(this);
     username = auth.currentUser!.uid;
     roomFunction(username!);
+  }
+
+  void requestMultiplePermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+
+    if (statuses[Permission.camera] == PermissionStatus.granted &&
+        statuses[Permission.microphone] == PermissionStatus.granted) {
+      debugPrint('Permission granted');
+    } else {
+      requestMultiplePermissions();
+    }
   }
 
   @override

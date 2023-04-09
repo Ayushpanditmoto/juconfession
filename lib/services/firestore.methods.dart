@@ -32,7 +32,7 @@ class FirestoreMethods {
 
       PostModel post = PostModel(
         confession: confession,
-        uid: uid,
+        // uid: uid,
         likes: [],
         postId: postId,
         datePublished: DateTime.now(),

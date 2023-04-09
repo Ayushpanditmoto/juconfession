@@ -57,7 +57,7 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'JU Confession',
+                  'JU Valentine',
                   style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,

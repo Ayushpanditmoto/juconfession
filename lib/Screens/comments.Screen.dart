@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:juconfession/components/comment.card.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/services/firestore.methods.dart';
-import 'package:juconfession/utils/save.localdata.dart';
 import 'package:shimmer/shimmer.dart';
 // import 'package:comment_tree/comment_tree.dart';
 
@@ -80,120 +79,109 @@ class _CommentsState extends State<Comments> {
         },
       ),
       bottomNavigationBar: SafeArea(
-        child: FutureBuilder(
-            future: SaveLocalData.getDataBool('isAnonymous'),
-            builder: (context, snapshot1) {
-              if (snapshot1.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot1.data == true) {
-                return SizedBox(
+          child: !user!.isAnonymous
+              ? Container(
                   height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Text("Anonymous User Can't Comment",
-                        style: TextStyle()),
-                  ),
-                );
-              }
-              return Container(
-                height: 50,
-                margin: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                padding: const EdgeInsets.only(left: 16, right: 8),
-                child: Row(
-                  children: [
-                    StreamBuilder(
-                        stream: firestore
-                            .collection('users')
-                            .doc(user!.uid)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(40)),
-                              child: Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.white,
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: const EdgeInsets.only(left: 16, right: 8),
+                  child: Row(
+                    children: [
+                      StreamBuilder(
+                          stream: firestore
+                              .collection('users')
+                              .doc(user!.uid)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return ClipRRect(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(40)),
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }
+                            return CachedNetworkImage(
+                              imageUrl: snapshot.data!['photoUrl'],
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                width: 36.0,
+                                height: 36.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
+                              placeholder: (context, url) => ClipRRect(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(40)),
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             );
-                          }
-                          return CachedNetworkImage(
-                            imageUrl: snapshot.data!['photoUrl'],
-                            imageBuilder: (context, imageProvider) => Container(
-                              width: 36.0,
-                              height: 36.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                          }),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 8),
+                          child: TextField(
+                            controller: commentEditingController,
+                            decoration: InputDecoration(
+                              hintText:
+                                  'Comment as ${user!.displayName ?? ''} ',
+                              border: InputBorder.none,
                             ),
-                            placeholder: (context, url) => ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(40)),
-                              child: Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          );
-                        }),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 8),
-                        child: TextField(
-                          controller: commentEditingController,
-                          decoration: InputDecoration(
-                            hintText: 'Comment as ${user!.displayName ?? ''} ',
-                            border: InputBorder.none,
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        if (commentEditingController.text.isNotEmpty) {
-                          // add comment to database
-                          await FirestoreMethods().postComment(
-                            widget.snaps['postId'],
-                            commentEditingController.text,
-                            user!.uid,
-                            user!.displayName,
-                            user!.photoURL,
-                          );
+                      InkWell(
+                        onTap: () async {
+                          if (commentEditingController.text.isNotEmpty) {
+                            // add comment to database
+                            await FirestoreMethods().postComment(
+                              widget.snaps['postId'],
+                              commentEditingController.text,
+                              user!.uid,
+                              user!.displayName,
+                              user!.photoURL,
+                            );
 
-                          commentEditingController.clear();
-                        }
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          child: const Icon(Icons.send)),
-                    )
-                  ],
-                ),
-              );
-            }),
-      ),
+                            commentEditingController.clear();
+                          }
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 8),
+                            child: const Icon(Icons.send)),
+                      )
+                    ],
+                  ),
+                )
+              : const SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: Text('Login to comment'),
+                  ),
+                )),
     );
   }
 }

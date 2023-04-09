@@ -8,6 +8,7 @@ import 'package:juconfession/constant.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../provider/theme_provider.dart';
 
@@ -144,7 +145,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
                   ),
                   Text(
                     FirebaseAuth.instance.currentUser!.email ??
-                        FirebaseAuth.instance.currentUser!.uid,
+                        "Anonymous User",
                     style: TextStyle(
                       color: themeProvider.themeMode == ThemeMode.light
                           ? Colors.black
@@ -158,26 +159,17 @@ class _ConfessionPageState extends State<ConfessionPage> {
                   ),
                   // Rate Us
                   TextButton(
-                    onPressed: () {
-                      //development stage dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Rate Us'),
-                            content:
-                                const Text('This feature is under development'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Ok'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                    onPressed: () async {
+                      //Url Launcher
+                      const url =
+                          'https://play.google.com/store/apps/details?id=com.esarkari.juconfess';
+                      // ignore: deprecated_member_use
+                      if (await canLaunch(url)) {
+                        // ignore: deprecated_member_use
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -304,7 +296,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8),
                           child: Post(
                             isAdminCheck: isAdminCheck,
                             snaps: snapshot.data!.docs[index].data(),

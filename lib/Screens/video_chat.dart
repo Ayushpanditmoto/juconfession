@@ -92,6 +92,7 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
         setState(() {
           inCall = false;
           remoteRenderer.srcObject = null;
+          Navigator.of(context).pop(context);
         });
       });
 
@@ -114,17 +115,14 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed ||
-        state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      if (mounted) {
-        closeCameraStream();
-        peer.dispose();
-        peer.close();
-        localRenderer.dispose();
-        remoteRenderer.dispose();
-      }
+    if (AppLifecycleState.resumed == state) {
+      _getUsersMedia(true, true);
+    } else if (AppLifecycleState.inactive == state) {
+      _getUsersMedia(true, true);
+    } else if (AppLifecycleState.paused == state) {
+      _getUsersMedia(true, true);
+    } else if (AppLifecycleState.detached == state) {
+      closeCameraStream();
     }
     super.didChangeAppLifecycleState(state);
   }
