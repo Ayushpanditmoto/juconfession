@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/components/post_components.dart';
+import 'package:juconfession/constant.dart';
 import 'package:juconfession/utils/route.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('JU Confession'),
+        title: Text(appName),
         centerTitle: true,
         actions: [
           IconButton(
@@ -117,7 +118,7 @@ class _ConfessionPageState extends State<ConfessionPage> {
                           height: 10,
                         ),
                         Text(
-                          "JU Confession",
+                          appName,
                           style: TextStyle(
                             color: themeProvider.themeMode == ThemeMode.light
                                 ? Colors.black
@@ -141,7 +142,8 @@ class _ConfessionPageState extends State<ConfessionPage> {
                     ),
                   ),
                   Text(
-                    FirebaseAuth.instance.currentUser!.email!,
+                    FirebaseAuth.instance.currentUser!.email ??
+                        FirebaseAuth.instance.currentUser!.uid,
                     style: TextStyle(
                       color: themeProvider.themeMode == ThemeMode.light
                           ? Colors.black

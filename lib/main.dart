@@ -126,9 +126,12 @@ class _MyAppState extends State<MyApp> {
                                       ],
                                     ),
                                   );
-                                } else if ((documentSnapshot.data()
-                                        as dynamic)['isVerified'] ==
-                                    false) {
+                                } else if (
+                                    // (documentSnapshot.data()
+                                    //       as dynamic)['isVerified'] ==
+                                    //   false
+                                    !FirebaseAuth
+                                        .instance.currentUser!.emailVerified) {
                                   return const VerifyEmail();
                                 }
 

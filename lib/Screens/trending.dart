@@ -1,90 +1,135 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:juconfession/Screens/profile.screen.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TrendingPage extends StatelessWidget {
   const TrendingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Trending'),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: const [
-            TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.trending_up),
-                  text: 'Most Followers',
-                ),
-                Tab(
-                  icon: Icon(Icons.girl),
-                  text: 'Famous Girls',
-                ),
-                Tab(
-                  icon: Icon(Icons.boy_rounded),
-                  text: 'Famous Boys',
-                ),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  FeatureNot(),
-                  FeatureNot(),
-                  FeatureNot(),
-                  // MostPopular(),
-                  // PopularGirls(),
-                  // PopularBoys(),
-                ],
-              ),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('All Users'),
       ),
-    );
-  }
-}
-
-class FeatureNot extends StatelessWidget {
-  const FeatureNot({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          //once we reach 100 User This feature will be available
-          // Text(
-          //   'Feature Not Available',
-          //   style: TextStyle(
-          //     fontSize: 17,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Once we reach 100 Users',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'This feature will be Automatically available',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+      body: StreamBuilder(
+        //top followers
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .orderBy('followers', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot user = snapshot.data!.docs[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(
+                          uid: snapshot.data!.docs[index].id,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        //image
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: CachedNetworkImage(
+                              imageUrl: user['photoUrl'],
+                              placeholder: (context, url) => Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        //name
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user['name'],
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              " ${user['department']} ${user['batch']}",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              "${user['followers'].length.toString()} Followers",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        //followers
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            (index + 1).toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }

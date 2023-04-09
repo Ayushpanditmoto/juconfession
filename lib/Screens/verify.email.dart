@@ -71,8 +71,8 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   void checkEmailVerified() async {
-    // await auth.currentUser!.reload();
-    if (auth.currentUser!.emailVerified) {
+    await auth.currentUser!.reload();
+    if (FirebaseAuth.instance.currentUser!.emailVerified) {
       await firestore
           .collection('users')
           .doc(auth.currentUser!.uid)
@@ -83,9 +83,11 @@ class _VerifyEmailState extends State<VerifyEmail> {
       Navigator.of(context).pushNamedAndRemoveUntil(
           RoutePath.home, (Route<dynamic> route) => false);
     } else {
+      //show one time only
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Email not verified'),
+          content: Text('Please verify your email'),
         ),
       );
     }

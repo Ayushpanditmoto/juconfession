@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/components/like.animation.dart';
+import 'package:juconfession/constant.dart';
+import 'package:juconfession/utils/save.localdata.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../Screens/comments.Screen.dart';
@@ -42,51 +44,66 @@ class Post extends StatelessWidget {
           children: [
             Row(
               children: [
-                CachedNetworkImage(
-                  imageUrl: snaps['gender'] == 'Male'
-                      ? 'https://i1.sndcdn.com/artworks-ywcx1pUzUGGvjwmH-BUNWRA-t500x500.jpg'
-                      : 'https://i.kym-cdn.com/photos/images/newsfeed/002/386/213/ce9.jpg',
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: 40.0,
-                    height: 40.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
-                  placeholder: (context, url) => ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(40)),
-                    child: Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        color: Colors.white,
+                GestureDetector(
+                  onDoubleTap: () {
+                    if (isAdminCheck == true) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            uid: snaps['uid'],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: CachedNetworkImage(
+                    imageUrl: snaps['gender'] == 'Male'
+                        ? 'https://i1.sndcdn.com/artworks-ywcx1pUzUGGvjwmH-BUNWRA-t500x500.jpg'
+                        : 'https://i.kym-cdn.com/photos/images/newsfeed/002/386/213/ce9.jpg',
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 40.0,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
                       ),
                     ),
+                    placeholder: (context, url) => ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(40)),
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
+                      children: [
                         Text(
-                          'JU Confession',
-                          style: TextStyle(
+                          appName,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(width: 5),
-                        Icon(
+                        const SizedBox(width: 5),
+                        const Icon(
                           Icons.verified,
                           color: Colors.blue,
                           size: 16,
@@ -105,7 +122,7 @@ class Post extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  width: 50,
+                  width: 60,
                   padding: const EdgeInsets.all(5),
                   constraints: const BoxConstraints(
                     minWidth: 30,
@@ -191,11 +208,6 @@ class Post extends StatelessWidget {
                               if (isAdminCheck == true)
                                 ListTile(
                                   onTap: () async {
-                                    // Navigator.pop(context);
-
-                                    // await FirestoreMethods()
-                                    //     .deletePost(snaps['postId']);
-                                    //show dialog
                                     showDialog(
                                       context: context,
                                       builder: (context) {
@@ -226,24 +238,6 @@ class Post extends StatelessWidget {
                                   },
                                   leading: const Icon(Icons.delete),
                                   title: const Text('Delete Post (Admin Only)'),
-                                ),
-                              if (isAdminCheck == true)
-                                //profile page redirect
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProfileScreen(
-                                          uid: snaps['uid'],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  leading: const Icon(Icons.person),
-                                  title:
-                                      const Text('View Profile (Admin Only)'),
                                 ),
                               ListTile(
                                 onTap: () {
@@ -315,22 +309,25 @@ class Post extends StatelessWidget {
                     ),
                   );
                 },
-                child: CachedNetworkImage(
-                  height: 150,
-                  imageUrl: snaps['photoUrl'],
-                  placeholder: (context, url) => SizedBox(
-                    height: 100,
-                    child: Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: 150,
-                        height: 100,
-                        color: Colors.white,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: snaps['photoUrl'],
+                    placeholder: (context, url) => SizedBox(
+                      height: 100,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 150,
+                          height: 100,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
             const SizedBox(height: 10),
@@ -426,11 +423,29 @@ class Post extends StatelessWidget {
                   smallLike: true,
                   child: IconButton(
                     onPressed: () {
-                      FirestoreMethods().likePost(
-                        snaps['postId'],
-                        user.uid,
-                        snaps['likes'],
-                      );
+                      SaveLocalData.getDataBool('isAnonymous').then((value) {
+                        if (value == true) {
+                          // one Time only
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('You cannot like a post anonymously'),
+                            ),
+                          );
+                          //hide snackbar after 3 seconds
+                          Future.delayed(const Duration(seconds: 1), () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          });
+                        } else {
+                          FirestoreMethods().likePost(
+                            snaps['postId'],
+                            user.uid,
+                            snaps['likes'],
+                          );
+                        }
+                      });
                     },
                     icon: Icon(
                       Icons.favorite,

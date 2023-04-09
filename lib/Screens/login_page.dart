@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:juconfession/Screens/home.dart';
 import 'package:juconfession/main.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
@@ -52,7 +53,7 @@ class _LoginState extends State<Login> {
               children: [
                 SvgPicture.asset(
                   'assets/home.svg',
-                  height: 300,
+                  height: 250,
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -123,6 +124,12 @@ class _LoginState extends State<Login> {
                         ),
                         (route) => false,
                       );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(result),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -139,6 +146,55 @@ class _LoginState extends State<Login> {
                         )
                       : const Text(
                           'Login',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 10),
+                //Anonymously login button
+                ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    String result = await AuthMethod().loginAnonymously();
+                    setState(() {
+                      isLoading = false;
+                    });
+
+                    if (result == 'Logged In Successfully') {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Confession(),
+                        ),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(result),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                    backgroundColor: const Color.fromARGB(255, 115, 115, 115),
+                    minimumSize: const Size(160, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.black,
+                        )
+                      : const Text(
+                          'Login Anonymously',
                           style: TextStyle(
                             color: Colors.black87,
                             fontSize: 16,

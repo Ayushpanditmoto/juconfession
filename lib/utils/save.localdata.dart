@@ -10,4 +10,15 @@ class SaveLocalData {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key) ?? "";
   }
+
+  //Boolean
+  static Future<void> saveDataBool(String key, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
+  static Future<bool> getDataBool(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key) ?? false;
+  }
 }

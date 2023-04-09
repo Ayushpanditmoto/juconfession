@@ -2,7 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:juconfession/Screens/all_user.dart';
+
 import 'package:juconfession/Screens/confession.dart';
 import 'package:juconfession/Screens/profile.screen.dart';
 import 'package:juconfession/Screens/trending.dart';
@@ -85,6 +85,20 @@ class _ConfessionState extends State<Confession> {
                   color: _page == 1 ? Colors.blue : Colors.grey,
                 ),
               ),
+              // IconButton(
+              //   highlightColor: Colors.transparent,
+              //   splashColor: Colors.transparent,
+              //   onPressed: () {
+              //     setState(() {
+              //       _page = 2;
+              //       navigationTapped(_page);
+              //     });
+              //   },
+              //   icon: Icon(
+              //     Icons.photo_camera_front_sharp,
+              //     color: _page == 2 ? Colors.blue : Colors.grey,
+              //   ),
+              // ),
               IconButton(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
@@ -95,7 +109,7 @@ class _ConfessionState extends State<Confession> {
                   });
                 },
                 icon: Icon(
-                  Icons.photo_camera_front_sharp,
+                  Icons.add,
                   color: _page == 2 ? Colors.blue : Colors.grey,
                 ),
               ),
@@ -104,23 +118,6 @@ class _ConfessionState extends State<Confession> {
                 splashColor: Colors.transparent,
                 onPressed: () {
                   setState(() {
-                    _page = 3;
-                    navigationTapped(_page);
-                  });
-                },
-                icon: Icon(
-                  Icons.add,
-                  color: _page == 3 ? Colors.blue : Colors.grey,
-                ),
-              ),
-              IconButton(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onPressed: () {
-                  setState(() {
-                    // _page = 3;
-                    // navigationTapped(_page);
-
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -130,7 +127,7 @@ class _ConfessionState extends State<Confession> {
                 },
                 icon: Icon(
                   Icons.video_chat_outlined,
-                  color: _page == 5 ? Colors.blue : Colors.grey,
+                  color: _page == 4 ? Colors.blue : Colors.grey,
                 ),
               ),
               IconButton(
@@ -138,13 +135,13 @@ class _ConfessionState extends State<Confession> {
                 splashColor: Colors.transparent,
                 onPressed: () {
                   setState(() {
-                    _page = 6;
+                    _page = 5;
                     navigationTapped(_page);
                   });
                 },
                 icon: Icon(
                   Icons.person,
-                  color: _page == 6 ? Colors.blue : Colors.grey,
+                  color: _page == 5 ? Colors.blue : Colors.grey,
                 ),
               ),
             ],
@@ -157,7 +154,7 @@ class _ConfessionState extends State<Confession> {
           children: [
             const ConfessionPage(),
             const TrendingPage(),
-            const AllUsers(),
+            // const AllUsers(),
             const AddConfession(),
             const ConnectingActivity(),
             // const VideoChat(),

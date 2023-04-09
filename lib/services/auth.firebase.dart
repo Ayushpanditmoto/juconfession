@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:juconfession/services/firestore.methods.dart';
 import '../model/user.model.dart';
+import '../utils/save.localdata.dart';
 import 'cloudinary.service.dart';
 
 class AuthMethod {
@@ -91,6 +92,27 @@ class AuthMethod {
         res = "The password provided is too weak.";
       } else if (e.code == 'email-already-in-use') {
         res = "The account already exists for that email.";
+      }
+    } catch (e) {
+      res = e.toString();
+      debugPrint(e.toString());
+    }
+    return res;
+  }
+
+  //Login Anonymously
+  Future<String> loginAnonymously() async {
+    String res = "Some Error Occured";
+    try {
+      UserCredential userCredential = await _auth.signInAnonymously();
+      User? user = userCredential.user;
+      SaveLocalData.saveDataBool('isAnonymous', true);
+      if (user != null) {
+        res = "Logged In Successfully";
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'operation-not-allowed') {
+        res = "Anonymous Sign In Failed";
       }
     } catch (e) {
       res = e.toString();

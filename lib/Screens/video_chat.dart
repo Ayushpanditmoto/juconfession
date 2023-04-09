@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:peerdart/peerdart.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,7 +34,6 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
   );
   final RTCVideoRenderer localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
-  final TextEditingController _controller = TextEditingController();
   late String? peerId;
   bool isPermissionGranted = false;
   bool inCall = false;
@@ -123,7 +121,7 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
       if (mounted) {
         closeCameraStream();
         peer.dispose();
-        _controller.dispose();
+        peer.close();
         localRenderer.dispose();
         remoteRenderer.dispose();
       }
@@ -136,7 +134,6 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
     if (mounted) {
       closeCameraStream();
       peer.dispose();
-      _controller.dispose();
       localRenderer.dispose();
       remoteRenderer.dispose();
     }
@@ -212,153 +209,32 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
       ),
       body: isPermissionGranted
           ? peerId != null
-              ? SingleChildScrollView(
-                  child: SizedBox(
-                    // height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        videoRenderers(
-                          theme,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text(
-                          'Click below to copy the Peer id',
-                        ),
-                        peerId == null
-                            ? const Text('Loading peer id...')
-                            : TextButton(
-                                onPressed: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: peer.id.toString()));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content:
-                                          Text('Peer id copied to clipboard'),
-                                    ),
-                                  );
-                                },
-                                child: Text(peerId!),
-                              ),
-                        inCall
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  peer.disconnect();
-                                  setState(() {
-                                    remoteRenderer.srcObject = null;
-                                    inCall = false;
-                                  });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.deepPurple,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                ),
-                                child: const Text('Disconnect'),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.65,
-                                    child: TextField(
-                                      controller: _controller,
-                                      decoration: const InputDecoration(
-                                          hintText: 'Enter peer id',
-                                          border: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.deepPurple,
-                                            ),
-                                          )),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      connect(widget.incoming);
-                                      // if (_controller.text.isNotEmpty &&
-                                      //     _controller.text.length > 5) {
-                                      //   connect(_controller.text);
-                                      // } else {
-                                      //   ScaffoldMessenger.of(context)
-                                      //       .showSnackBar(
-                                      //     const SnackBar(
-                                      //       content: Text(
-                                      //           'Please enter Your Friend peer id'),
-                                      //     ),
-                                      //   );
-                                      // }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.deepPurple,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                      ),
-                                    ),
-                                    child: const Text('Connect'),
-                                  ),
-                                ],
-                              ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(widget.createdBy),
-                        TextButton(
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(
-                                text: widget.incoming.toString()));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Peer id copied to clipboard'),
-                              ),
-                            );
-                          },
-                          child: Text(widget.incoming),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // createRoom();
-                            //development stage dialog
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Development Stage'),
-                                content: const Text(
-                                    'This feature is under development'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Ok'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.deepPurple,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-                          ),
-                          child: const Text('Search for a random user'),
-                        ),
-                      ],
-                    ),
+              ? SizedBox(
+                  // height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      videoRenderers(
+                        theme,
+                      ),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Text("${FirebaseAuth.instance.currentUser!.uid} Me"),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Text("${widget.createdBy} created this room"),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Text("${widget.incoming} is calling you"),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
+                      // Text("FirstTime: ${widget.firstTime}"),
+                    ],
                   ),
                 )
               : SizedBox(
@@ -382,13 +258,13 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
 
   SizedBox videoRenderers(ThemeProvider theme) => SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * 0.85,
         child: Stack(
           children: [
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.85,
               key: const Key('local'),
               margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
               decoration: BoxDecoration(
@@ -415,7 +291,7 @@ class _VideoChatState extends State<VideoChat> with WidgetsBindingObserver {
                     top = max(
                       0,
                       min(top + details.delta.dy,
-                          MediaQuery.of(context).size.height * 0.3 - 2),
+                          MediaQuery.of(context).size.height * 0.65 - 2),
                     );
                     left = max(
                         0,

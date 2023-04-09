@@ -81,7 +81,7 @@ class _ConnectingActivityState extends State<ConnectingActivity>
           database.ref().child("rooms").child(key).child("status").set(1);
           roomCreated = key;
 
-          String incoming = value["incoming"];
+          String incoming = username;
           String createdBy = value["createdBy"];
           bool isAvailable = value["isAvailable"];
           inspect(incoming);
@@ -196,7 +196,7 @@ class _ConnectingActivityState extends State<ConnectingActivity>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            //total online users
+            //total online users task left
 
             Text("Searching for a random person..."),
             SizedBox(height: 20),
