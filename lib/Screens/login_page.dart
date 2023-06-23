@@ -7,6 +7,7 @@ import 'package:juconfession/main.dart';
 import 'package:juconfession/services/auth.firebase.dart';
 import 'package:juconfession/utils/route.dart';
 import '../components/custom_text_field.dart';
+import '../constant.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -56,9 +57,9 @@ class _LoginState extends State<Login> {
                   height: 250,
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'JU Valentine',
-                  style: TextStyle(
+                Text(
+                  appName,
+                  style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
