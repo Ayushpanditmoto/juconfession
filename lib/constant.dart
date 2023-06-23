@@ -1,1 +1,1 @@
-String appName = 'JU Valentine';
+String appName = 'JU Confessions';
