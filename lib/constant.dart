@@ -1,1 +1,0 @@
-String appName = 'JU Confession';
