@@ -1,6 +1,15 @@
 # JU Confession
 
 Welcome to JU Confession! This Flutter project allows users to write and share their confessions anonymously.
+![icon](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/8601b039-c7ca-46eb-9d6c-95c8d985ea97)
+<br>
+[![en_badge_web_generic](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/605c4c68-685b-4d1e-aa20-61cc510d85ad)](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/605c4c68-685b-4d1e-aa20-61cc510d85ad)
+<br>
+[Download](https://play.google.com/store/apps/details?id=com.esarkari.juconfess)
+
+
+
+
 
 ## Project Description
 
