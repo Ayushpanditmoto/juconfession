@@ -5,6 +5,25 @@ Welcome to JU Confession! This Flutter project allows users to write and share t
 ## Project Description
 
 JU Confession is a mobile application built using the Flutter framework. It provides a platform where users can submit their confessions without revealing their identities. The confessions are then displayed anonymously for others to read and react to.
+## Built With
+
+- [Flutter](https://flutter.dev/)
+- [Firebase](https://firebase.google.com/)
+- [Cloud Firestore](https://firebase.google.com/docs/firestore)
+- [Webrtc For Video Call](https://peerjs.com/)
+
+## Features
+
+- Submit confessions anonymously.
+- Random Video Calling Features
+- User can Follow Each Other.
+- Post Photos in Their Profile
+- Anonymous User cannot access Profile They can only post Confession
+- View and read confessions posted by other users.
+- React to confessions using likes or comments.
+- Sort and filter confessions based on popularity or date.
+- Share confessions with others through various channels.
+
 
 ## Screenshots
 
@@ -19,19 +38,6 @@ JU Confession is a mobile application built using the Flutter framework. It prov
 
 ![Demo](https://user-images.githubusercontent.com/56132780/120933004-1cd52e80-c71a-11eb-8b0a-9b0b6b0c6b0a.gif)
 
-## Built With
-
-- [Flutter](https://flutter.dev/)
-- [Firebase](https://firebase.google.com/)
-- [Cloud Firestore](https://firebase.google.com/docs/firestore)
-
-## Features
-
-- Submit confessions anonymously.
-- View and read confessions posted by other users.
-- React to confessions using likes or comments.
-- Sort and filter confessions based on popularity or date.
-- Share confessions with others through various channels.
 
 ## Installation
 
