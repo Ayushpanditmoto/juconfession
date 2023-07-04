@@ -27,10 +27,12 @@ JU Confession is a mobile application built using the Flutter framework. It prov
 
 ## Screenshots
 
-|   |   |
-|---|---|
-| ![1688464549636](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/a6e225dc-432f-4bd8-84f5-61a5af9357a5) | ![1688464549643](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/844464d0-dee0-4f02-849f-e5c15ca0e41e) |
-| ![1688464549629](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/84d8f7a1-3c34-434b-871f-817fdb241d30) | ![1688464549621](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/cf363e45-8ce0-4a09-a4b4-3a129c0b9f30) |
+
+
+| |  |  |  |
+|---------|---------|---------|---------|
+| ![1688464549636](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/a6e225dc-432f-4bd8-84f5-61a5af9357a5) | ![1688464549643](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/844464d0-dee0-4f02-849f-e5c15ca0e41e) | ![1688464549629](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/84d8f7a1-3c34-434b-871f-817fdb241d30) | ![1688464549621](https://github.com/Ayushpanditmoto/juconfession/assets/31253617/cf363e45-8ce0-4a09-a4b4-3a129c0b9f30) |
+
 
 
 
